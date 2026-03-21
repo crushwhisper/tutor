@@ -3,127 +3,187 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAppStore } from '@/store/app'
+import {
+  House,
+  Books,
+  Lightning,
+  CalendarDots,
+  ClipboardText,
+  ChartBar,
+  Gear,
+  Lock,
+} from '@phosphor-icons/react'
 
 interface NavItem {
   href: string
   label: string
-  icon: string
-  isPro?: boolean
+  sublabel?: string
+  Icon: React.ElementType
+  proOnly?: boolean
 }
 
-interface NavSection {
-  label: string | null
-  items: NavItem[]
-}
-
-const NAV_SECTIONS: NavSection[] = [
-  {
-    label: null,
-    items: [
-      { href: '/app', label: 'Tableau de bord', icon: '🏠' },
-    ],
-  },
-  {
-    label: 'Préparation',
-    items: [
-      { href: '/app/preparation', label: 'Préparation Libre', icon: '📚' },
-      { href: '/app/programmes', label: 'Programmes', icon: '📅' },
-      { href: '/app/examen-blanc', label: 'Examen Blanc', icon: '🏆', isPro: true },
-    ],
-  },
-  {
-    label: 'Suivi',
-    items: [
-      { href: '/app/progression', label: 'Progression', icon: '📊' },
-      { href: '/app/journal', label: 'Journal', icon: '📝' },
-    ],
-  },
-  {
-    label: 'Compte',
-    items: [
-      { href: '/app/settings', label: 'Paramètres', icon: '⚙️' },
-    ],
-  },
+const NAV_ITEMS: NavItem[] = [
+  { href: '/app', label: 'Cockpit', Icon: House },
+  { href: '/app/preparation', label: 'Préparation', Icon: Books },
+  { href: '/app/programmes/90', label: 'Programme 3 Mois', sublabel: 'Intensif', Icon: Lightning, proOnly: true },
+  { href: '/app/programmes/180', label: 'Programme 6 Mois', sublabel: 'Recommandé', Icon: CalendarDots, proOnly: true },
+  { href: '/app/examen-blanc', label: 'Examens Blancs', Icon: ClipboardText, proOnly: true },
+  { href: '/app/progression', label: 'Progression', Icon: ChartBar, proOnly: true },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const { sidebarCollapsed, toggleSidebar } = useAppStore()
+  const { user } = useAppStore()
+  const isPro = user?.subscription_plan === 'pro' && user?.subscription_status === 'active'
+
+  function isActive(href: string) {
+    if (href === '/app') return pathname === '/app'
+    return pathname.startsWith(href)
+  }
 
   return (
-    <aside
-      className={`flex flex-col bg-navy-800 border-r border-gold/10 transition-all duration-300 shrink-0 ${
-        sidebarCollapsed ? 'w-16' : 'w-64'
-      }`}
-    >
-      {/* Logo */}
-      <div className="flex items-center justify-between px-4 py-5 border-b border-gold/10">
-        {!sidebarCollapsed && (
-          <Link href="/app" className="font-serif text-xl text-white">TUTOR</Link>
-        )}
-        <button
-          onClick={toggleSidebar}
-          className="p-1.5 rounded-lg text-muted hover:text-gold hover:bg-gold/10 transition-all"
-          aria-label="Réduire le menu"
-        >
-          {sidebarCollapsed ? '→' : '←'}
-        </button>
-      </div>
+    <aside style={{
+      position: 'fixed',
+      left: 0, top: '64px', bottom: 0,
+      width: '240px',
+      background: 'var(--app-surface)',
+      borderRight: '1px solid var(--app-border)',
+      display: 'flex', flexDirection: 'column',
+      zIndex: 30,
+      overflowY: 'auto',
+    }}>
+      <nav style={{ flex: 1, padding: '16px 12px' }}>
+        {NAV_ITEMS.map((item) => {
+          const active = isActive(item.href)
+          const locked = (item.proOnly ?? false) && !isPro
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-6">
-        {NAV_SECTIONS.map((section, si) => (
-          <div key={si}>
-            {section.label && !sidebarCollapsed && (
-              <p className="px-3 mb-2 text-xs font-semibold text-muted uppercase tracking-widest">
-                {section.label}
-              </p>
-            )}
-            <ul className="space-y-1">
-              {section.items.map((item) => {
-                const isActive = pathname === item.href ||
-                  (item.href !== '/app' && pathname.startsWith(item.href))
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
-                        isActive
-                          ? 'bg-gold/15 text-gold'
-                          : 'text-muted hover:text-white hover:bg-white/5'
-                      } ${sidebarCollapsed ? 'justify-center' : ''}`}
-                      title={sidebarCollapsed ? item.label : undefined}
-                    >
-                      <span className="text-lg shrink-0">{item.icon}</span>
-                      {!sidebarCollapsed && (
-                        <span className="text-sm font-medium truncate">{item.label}</span>
-                      )}
-                      {!sidebarCollapsed && item.isPro && (
-                        <span className="ml-auto text-xs px-1.5 py-0.5 rounded-full bg-gold/20 text-gold font-medium">
-                          Pro
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        ))}
+          return (
+            <NavLink
+              key={item.href}
+              item={item}
+              active={active}
+              locked={locked}
+            />
+          )
+        })}
+
+        {/* Separator */}
+        <div style={{
+          height: '1px',
+          background: 'var(--app-border)',
+          margin: '8px 14px',
+        }} />
+
+        <NavLink
+          item={{ href: '/app/settings', label: 'Paramètres', Icon: Gear }}
+          active={pathname.startsWith('/app/settings')}
+          locked={false}
+        />
       </nav>
 
-      {/* Bottom — upgrade CTA for free users */}
-      {!sidebarCollapsed && (
-        <div className="p-4 border-t border-gold/10">
-          <div className="glass-card p-4 text-center">
-            <div className="text-2xl mb-2">⭐</div>
-            <p className="text-xs text-muted mb-3">Débloquez toutes les fonctionnalités</p>
-            <Link href="/app/settings?tab=subscription" className="btn-primary text-xs py-2 px-4 block text-center">
-              Passer à Pro
-            </Link>
-          </div>
+      {/* Upgrade CTA — Starter only */}
+      {!isPro && (
+        <div style={{ padding: '16px 12px', borderTop: '1px solid var(--app-border)' }}>
+          <Link
+            href="/pricing"
+            style={{
+              display: 'block', textAlign: 'center',
+              padding: '12px', borderRadius: '12px',
+              background: 'var(--accent-soft)',
+              border: '1px solid var(--accent-glow)',
+              textDecoration: 'none',
+              fontSize: '13px', fontWeight: 600,
+              color: 'var(--accent)',
+              transition: 'background 200ms',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(59,130,246,0.14)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--accent-soft)' }}
+          >
+            Passer à Pro →
+          </Link>
         </div>
       )}
     </aside>
+  )
+}
+
+function NavLink({
+  item, active, locked,
+}: {
+  item: NavItem
+  active: boolean
+  locked: boolean
+}) {
+  const baseStyle: React.CSSProperties = {
+    display: 'flex', alignItems: 'center', gap: '10px',
+    padding: '10px 14px', borderRadius: '10px',
+    textDecoration: 'none',
+    marginBottom: '2px',
+    transition: 'all 200ms ease',
+    cursor: locked ? 'default' : 'pointer',
+    opacity: locked ? 0.55 : 1,
+    color: active ? 'var(--accent)' : 'var(--app-text-muted)',
+    background: active ? 'var(--accent-soft)' : 'transparent',
+    fontFamily: 'var(--font-geist-sans), system-ui',
+    fontSize: '14px', fontWeight: active ? 600 : 500,
+  }
+
+  const inner = (
+    <>
+      <item.Icon
+        size={20}
+        weight={active ? 'fill' : 'regular'}
+        style={{ color: active ? 'var(--accent)' : 'var(--app-text-muted)', flexShrink: 0 }}
+      />
+      <span style={{ flex: 1, lineHeight: 1.2 }}>
+        {item.label}
+        {item.sublabel && (
+          <span style={{
+            display: 'block', fontSize: '10px', fontWeight: 500,
+            textTransform: 'uppercase', letterSpacing: '0.5px',
+            color: active ? 'var(--accent)' : 'var(--app-text-ghost)',
+            marginTop: '1px',
+          }}>
+            {item.sublabel}
+          </span>
+        )}
+      </span>
+      {locked && (
+        <Lock size={12} style={{ color: 'var(--app-text-ghost)', flexShrink: 0 }} />
+      )}
+    </>
+  )
+
+  if (locked) {
+    return (
+      <Link
+        href="/pricing"
+        style={baseStyle}
+        title="Passez au Pro pour débloquer"
+      >
+        {inner}
+      </Link>
+    )
+  }
+
+  return (
+    <Link
+      href={item.href}
+      style={baseStyle}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = 'var(--app-surface-hover)'
+          e.currentTarget.style.color = 'var(--app-text-body)'
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = 'transparent'
+          e.currentTarget.style.color = 'var(--app-text-muted)'
+        }
+      }}
+    >
+      {inner}
+    </Link>
   )
 }

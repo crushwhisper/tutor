@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Sidebar from '@/components/app/Sidebar'
 import Topbar from '@/components/app/Topbar'
 import ToastContainer from '@/components/app/ToastContainer'
+import OwlJournal from '@/components/app/OwlJournal'
 
 export const metadata: Metadata = {
   title: 'TUTOR — Mon Espace',
@@ -9,14 +10,28 @@ export const metadata: Metadata = {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen bg-navy overflow-hidden">
+    <div className="cockpit-wrapper" style={{ minHeight: '100dvh' }}>
+      {/* Fixed top bar */}
+      <Topbar />
+
+      {/* Fixed sidebar */}
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Topbar />
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
-          {children}
-        </main>
-      </div>
+
+      {/* Scrollable main content */}
+      <main style={{
+        marginLeft: '240px',
+        marginTop: '64px',
+        minHeight: 'calc(100dvh - 64px)',
+        padding: '40px',
+        background: 'var(--app-bg)',
+        overflowY: 'auto',
+      }}>
+        {children}
+      </main>
+
+      {/* Owl / Journal panel */}
+      <OwlJournal />
+
       <ToastContainer />
     </div>
   )

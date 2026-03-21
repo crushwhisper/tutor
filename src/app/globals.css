@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Halant:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Halant:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 @import "tailwindcss";
 @source "../";
@@ -224,6 +224,69 @@ body {
 }
 .animate-bounce-scroll {
   animation: bounce-scroll 2s ease-in-out infinite;
+}
+
+/* ── Cockpit wrapper — "Clinical Clean" light theme ── */
+.cockpit-wrapper {
+  --app-bg: #FAFAFA;
+  --app-surface: #FFFFFF;
+  --app-surface-hover: #F5F5F5;
+  --app-border: #E8E8E8;
+  --app-border-hover: #D0D0D0;
+  --app-text: #111111;
+  --app-text-body: #444444;
+  --app-text-muted: #888888;
+  --app-text-ghost: #BBBBBB;
+
+  --accent: #3B82F6;
+  --accent-soft: rgba(59,130,246,0.08);
+  --accent-glow: rgba(59,130,246,0.25);
+  --success: #10B981;
+  --success-soft: rgba(16,185,129,0.08);
+  --warning: #F59E0B;
+  --warning-soft: rgba(245,158,11,0.08);
+  --danger: #EF4444;
+  --danger-soft: rgba(239,68,68,0.08);
+  --locked: #D4D4D4;
+
+  --owl-gold: #C4954A;
+  --owl-body: #2D2D2D;
+
+  background: var(--app-bg);
+  color: var(--app-text);
+  font-family: var(--font-geist-sans), 'Bricolage Grotesque', system-ui, sans-serif;
+}
+
+/* Cockpit scrollbar */
+.cockpit-wrapper ::-webkit-scrollbar { width: 5px; height: 5px; }
+.cockpit-wrapper ::-webkit-scrollbar-track { background: transparent; }
+.cockpit-wrapper ::-webkit-scrollbar-thumb { background: var(--app-border); border-radius: 3px; }
+.cockpit-wrapper ::-webkit-scrollbar-thumb:hover { background: var(--app-border-hover); }
+
+/* Cockpit skeleton loader */
+@keyframes cockpit-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--app-border) 25%, var(--app-surface-hover) 50%, var(--app-border) 75%);
+  background-size: 800px 100%;
+  animation: cockpit-shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+/* Owl blink animation */
+@keyframes owl-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95%, 97% { transform: scaleY(0.05); }
+}
+.owl-eye { transform-origin: center; animation: owl-blink 7s ease-in-out infinite; }
+.owl-eye-r { animation-delay: 0.05s; }
+
+/* Owl sway */
+@keyframes owl-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
 }
 
 /* Prose styles for course content */
