@@ -7,7 +7,7 @@ import ScienceFooter from '@/components/science/ScienceFooter'
 export default function SciencePage() {
   return (
     <main
-      style={{ background: '#fcf6ef', color: '#2b180a', overflowX: 'hidden' }}
+      style={{ background: 'transparent', color: '#2b180a', overflowX: 'hidden' }}
       className="antialiased"
     >
       <ScienceHero />

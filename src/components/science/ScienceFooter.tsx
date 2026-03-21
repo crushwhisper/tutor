@@ -9,7 +9,9 @@ export default function ScienceFooter() {
 
   return (
     <footer style={{
-      background: '#fcf6ef',
+      background: 'rgba(252,246,239,0.80)',
+      backdropFilter: 'blur(8px)',
+      WebkitBackdropFilter: 'blur(8px)',
       borderTop: '1px solid #e8d3c0',
       padding: '40px 48px',
       display: 'flex',

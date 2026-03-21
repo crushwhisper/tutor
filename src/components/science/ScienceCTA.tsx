@@ -11,7 +11,7 @@ export default function ScienceCTA() {
 
   return (
     <section ref={ref} style={{
-      background: '#fcf6ef',
+      background: 'transparent',
       padding: '160px 0',
       textAlign: 'center',
     }}>

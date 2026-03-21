@@ -65,7 +65,9 @@ export default function ScienceMetrics() {
 
   return (
     <section ref={ref} style={{
-      background: '#fcf6ef',
+      background: 'rgba(252,246,239,0.72)',
+      backdropFilter: 'blur(8px)',
+      WebkitBackdropFilter: 'blur(8px)',
       borderTop: '1px solid #e8d3c0',
       borderBottom: '1px solid #e8d3c0',
       padding: '80px 0',

@@ -52,16 +52,10 @@ export default function ScienceHero() {
   const [ctaHovered, setCtaHovered] = useState(false)
 
   return (
-    <section style={{ minHeight: '100dvh', position: 'relative', display: 'flex', flexDirection: 'column', background: '#fcf6ef' }}>
+    <section style={{ minHeight: '100dvh', position: 'relative', display: 'flex', flexDirection: 'column', background: 'transparent' }}>
 
-      {/* Warm mesh background */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-        <div className="science-orb science-orb-1" />
-        <div className="science-orb science-orb-2" />
-        <div className="science-orb science-orb-3" />
-        {/* Bottom fade */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%', background: 'linear-gradient(to top, #fcf6ef 40%, transparent)' }} />
-      </div>
+      {/* Bottom fade into next section */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%', background: 'linear-gradient(to top, rgba(246,240,233,0.75) 40%, transparent)', pointerEvents: 'none', zIndex: 1 }} />
 
       {/* Navigation */}
       <nav style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, padding: '32px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

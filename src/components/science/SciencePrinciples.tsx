@@ -181,7 +181,7 @@ export default function SciencePrinciples() {
   const headerInView = useInView(headerRef, { once: true, margin: '-80px' })
 
   return (
-    <section id="principes" style={{ background: '#f6f0e9', padding: '160px 0' }}>
+    <section id="principes" style={{ background: 'rgba(246,240,233,0.75)', padding: '160px 0', backdropFilter: 'blur(0px)' }}>
       <div className="max-w-7xl mx-auto px-6">
 
         <div ref={headerRef} style={{ marginBottom: '80px' }}>
