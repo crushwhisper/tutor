@@ -1,251 +1,303 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
-import { createClient } from '@/lib/supabase/client'
-import { useAppStore } from '@/store/app'
-import type { User, JournalEntry } from '@/types'
+import { motion } from 'framer-motion'
 import {
-  CheckCircle,
-  Books,
-  Dna,
-  Hospital,
-  Syringe,
-  Ambulance,
-  FirstAidKit,
-  CalendarCheck,
+  Books, Lightning, CalendarDots,
+  Fire, ChartBar, Star, CheckCircle,
   ArrowRight,
-  ChartLineUp,
-  Brain
 } from '@phosphor-icons/react'
 
-interface ProgressWithRelations {
-  id: string
-  completed: boolean
-  courses: {
-    title: string
-    module_id: string
-    modules: {
-      name: string
-      color: string | null
-    } | null
-  } | null
-}
-
 interface Props {
-  profile: User | null
-  recentProgress: ProgressWithRelations[]
+  profile: {
+    full_name?: string | null
+    subscription_plan?: string | null
+    subscription_status?: string | null
+  } | null
   completedCount: number
-  lastJournal: JournalEntry | null
+  isPro: boolean
 }
 
-const MODULES = [
-  { slug: 'anatomie-biologie', name: 'Anatomie & Biologie', icon: Dna, color: '#4A90D9' },
-  { slug: 'medecine', name: 'Médecine Interne', icon: Hospital, color: '#E8A83E' },
-  { slug: 'chirurgie', name: 'Chirurgie', icon: Syringe, color: '#E85555' },
-  { slug: 'urgences-medicales', name: 'Urgences Méd', icon: Ambulance, color: '#9B59B6' },
-  { slug: 'urgences-chirurgicales', name: 'Urgences Chir', icon: FirstAidKit, color: '#E67E22' },
-]
+const fadeUp = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } },
+}
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.07 } },
+}
 
-export default function DashboardClient({ profile, recentProgress, completedCount, lastJournal }: Props) {
-  const [journalText, setJournalText] = useState('')
-  const [saving, setSaving] = useState(false)
-  const { addToast } = useAppStore()
+function todayLabel() {
+  return new Date().toLocaleDateString('fr-FR', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  })
+}
 
+export default function DashboardClient({ profile, completedCount, isPro }: Props) {
   const firstName = profile?.full_name?.split(' ')[0] ?? 'Étudiant'
-
-  async function saveJournal() {
-    if (!journalText.trim()) return
-    setSaving(true)
-
-    const supabase = createClient()
-    const { error } = await supabase.from('journal_entries').insert({
-      content: journalText,
-    })
-
-    if (error) {
-      addToast({ type: 'error', title: 'Erreur', message: "Impossible d'enregistrer le journal." })
-    } else {
-      addToast({ type: 'success', title: 'Journal enregistré', message: 'Votre entrée a été sauvegardée.' })
-      setJournalText('')
-    }
-    setSaving(false)
-  }
-
-  const QUICK_STATS = [
-    { label: 'Cours complétés', value: completedCount, icon: CheckCircle, color: 'text-emerald-400' },
-    { label: 'En cours', value: recentProgress.length, icon: ChartLineUp, color: 'text-gold' },
-    { label: 'Modules', value: 5, icon: Books, color: 'text-blue-400' },
-  ]
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100, damping: 20 } },
-  }
+  const date = todayLabel()
 
   return (
-    <motion.div 
-      variants={containerVariants}
+    <motion.div
+      variants={stagger}
       initial="hidden"
-      animate="show"
-      className="space-y-12 max-w-7xl mx-auto py-8"
+      animate="visible"
+      style={{ maxWidth: '960px', margin: '0 auto' }}
     >
-      {/* Aesthetic Header */}
-      <motion.div variants={itemVariants} className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 border-b border-white/5 pb-8">
-        <div>
-          <h1 className="text-3xl tracking-tight text-white mb-2 font-sans flex items-center gap-3">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            Espace de Travail
-          </h1>
-          <p className="text-text-secondary">Bienvenue, <span className="text-white font-medium">{firstName}</span>. Votre préparation est en cours de synchronisation.</p>
-        </div>
-        <Link href="/app/preparation" className="group rounded-xl bg-white text-navy font-semibold px-6 py-3 transition-transform active:scale-[0.98] flex items-center gap-2">
-          Reprendre l&apos;étude <ArrowRight weight="bold" className="group-hover:translate-x-1 transition-transform" />
-        </Link>
+      {/* ── Section 1 : Bienvenue ── */}
+      <motion.div variants={fadeUp} style={{ marginBottom: '40px' }}>
+        <h1 style={{
+          fontSize: '28px', fontWeight: 700,
+          color: 'var(--app-text)', letterSpacing: '-0.5px',
+          marginBottom: '6px',
+        }}>
+          Bonjour {firstName}
+        </h1>
+        <p style={{ fontSize: '14px', color: 'var(--app-text-muted)', textTransform: 'capitalize' }}>
+          {date}
+        </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column (Stats & Modules) - 8 cols */}
-        <div className="lg:col-span-8 flex flex-col gap-8">
-          
-          {/* Quick Stats: Clean grid without card boxes (Anti-Card) */}
-          <motion.div variants={itemVariants} className="grid grid-cols-3 divide-x divide-white/10 border-y border-white/10 py-6">
-            {QUICK_STATS.map((stat) => (
-              <div key={stat.label} className="px-6 flex flex-col items-start first:pl-0 last:pr-0">
-                <div className="flex justify-between items-start w-full mb-4">
-                  <span className="text-text-secondary text-sm font-medium">{stat.label}</span>
-                  <stat.icon weight="duotone" size={20} className={stat.color} />
-                </div>
-                <span className="text-4xl font-mono text-white tracking-tighter">{stat.value}</span>
-              </div>
-            ))}
-          </motion.div>
+      {/* ── Section 2 : Les 3 voies ── */}
+      <motion.div variants={fadeUp} style={{ marginBottom: '40px' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '20px',
+        }}>
+          {/* Carte 1 — Préparation Libre */}
+          <VoieCard
+            href="/app/preparation"
+            icon={<Books size={32} weight="duotone" style={{ color: 'var(--accent)' }} />}
+            title="Préparation Libre"
+            description="Naviguez librement dans les cours. Choisissez votre module et votre rythme."
+            tags={['Anatomie', 'Médecine', 'Chirurgie', 'Urgences']}
+            ctaLabel="Explorer"
+            accentColor="var(--accent)"
+            glowColor="rgba(59,130,246,0.12)"
+          />
 
-          {/* Modules Grid - Glass Cards */}
-          <motion.div variants={itemVariants}>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl text-white font-sans tracking-tight">Modules d&apos;Expertise</h2>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {MODULES.map((mod) => (
-                <Link
-                  key={mod.slug}
-                  href={`/app/preparation?module=${mod.slug}`}
-                  className="glass-card group p-5 hover:border-white/20 transition-all flex items-center gap-4"
-                >
-                  <div
-                    className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-white/10 shadow-inner"
-                    style={{ backgroundColor: `${mod.color}15` }}
-                  >
-                    <mod.icon weight="duotone" size={24} style={{ color: mod.color }} />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-medium tracking-tight group-hover:text-gold transition-colors">
-                      {mod.name}
-                    </h3>
-                    <p className="text-text-secondary text-xs mt-1">Explorer le curriculum →</p>
-                  </div>
-                </Link>
-              ))}
-              
-              <Link
-                href="/app/programmes"
-                className="glass-card p-5 border-gold/20 hover:border-gold/40 transition-all bg-gradient-to-br from-gold/10 to-transparent col-span-1 sm:col-span-2 flex items-center justify-between"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gold/20 border border-gold/30 flex items-center justify-center text-gold">
-                    <CalendarCheck weight="fill" size={24} />
-                  </div>
-                  <div>
-                    <p className="text-gold font-medium tracking-tight">Programmes de Planification</p>
-                    <p className="text-gold/70 text-sm mt-0.5">Séquences optimisées sur 90 / 180 jours.</p>
-                  </div>
-                </div>
-                <ArrowRight weight="bold" className="text-gold" />
-              </Link>
-            </div>
-          </motion.div>
+          {/* Carte 2 — Programme 3 Mois */}
+          <VoieCard
+            href="/app/programmes/90"
+            icon={<Lightning size={32} weight="duotone" style={{ color: 'var(--warning)' }} />}
+            title="Programme 3 Mois"
+            badge={{ label: 'INTENSIF', color: 'var(--warning)', bg: 'var(--warning-soft)' }}
+            description="90 jours. Rythme accéléré. Pour ceux qui ont peu de temps et beaucoup de détermination."
+            ctaLabel={isPro ? 'Commencer' : 'Essayer le Jour 1'}
+            accentColor="var(--warning)"
+            glowColor="rgba(245,158,11,0.10)"
+            locked={!isPro}
+          />
+
+          {/* Carte 3 — Programme 6 Mois */}
+          <VoieCard
+            href="/app/programmes/180"
+            icon={<CalendarDots size={32} weight="duotone" style={{ color: 'var(--success)' }} />}
+            title="Programme 6 Mois"
+            badge={{ label: 'RECOMMANDÉ', color: 'var(--success)', bg: 'var(--success-soft)' }}
+            description="180 jours. Couverture complète. La méthode la plus sûre pour tout maîtriser."
+            ctaLabel={isPro ? 'Commencer' : 'Essayer le Jour 1'}
+            accentColor="var(--success)"
+            glowColor="rgba(16,185,129,0.10)"
+            locked={!isPro}
+          />
         </div>
+      </motion.div>
 
-        {/* Right Column (Intelligent List & Status) - 4 cols */}
-        <div className="lg:col-span-4 flex flex-col gap-8">
-          
-          {/* Animated Activity List */}
-          <motion.div variants={itemVariants}>
-            <h3 className="text-sm font-medium text-text-secondary uppercase tracking-widest mb-4">Flux de Progression</h3>
-            <div className="glass-card p-6 min-h-[220px]">
-              {recentProgress.length > 0 ? (
-                <div className="flex flex-col gap-4">
-                  <AnimatePresence>
-                    {recentProgress.slice(0, 4).map((p, i) => (
-                      <motion.div 
-                        key={p.id} 
-                        layoutId={`progress-${p.id}`}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0, transition: { delay: i * 0.1 } }}
-                        className="flex items-start gap-3 group cursor-pointer"
-                      >
-                        <div className="w-2 h-2 rounded-full bg-gold shrink-0 mt-1.5 shadow-[0_0_8px_rgba(232,168,62,0.8)]" />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-white text-sm truncate font-medium group-hover:text-gold transition-colors">{p.courses?.title ?? 'Cours Actif'}</p>
-                          <p className="text-text-secondary text-xs truncate mt-0.5">{p.courses?.modules?.name ?? 'Traitement de données'}</p>
-                        </div>
-                        {p.completed && <CheckCircle weight="fill" size={16} className="text-emerald-400 shrink-0 mt-0.5" />}
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-center py-6 opacity-50">
-                  <Brain weight="duotone" size={32} className="text-text-secondary mb-3" />
-                  <p className="text-text-secondary text-sm">Système inactif.</p>
-                </div>
-              )}
-            </div>
-          </motion.div>
-
-          {/* Contextual Input (Journal) */}
-          <motion.div variants={itemVariants}>
-            <h3 className="text-sm font-medium text-text-secondary uppercase tracking-widest mb-4">Synthèse Cognitive</h3>
-            <div className="glass-card p-6 border-indigo-500/20 bg-indigo-500/5">
-              {lastJournal && (
-                <div className="mb-4 pl-3 border-l-2 border-indigo-500/50">
-                  <p className="text-text-secondary text-sm italic line-clamp-2">
-                    {lastJournal.content}
-                  </p>
-                </div>
-              )}
-              <div className="relative">
-                <textarea
-                  value={journalText}
-                  onChange={(e) => setJournalText(e.target.value)}
-                  placeholder="Capturez un état mental ou un concept clé..."
-                  rows={2}
-                  className="w-full bg-navy-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-text-secondary focus:outline-none focus:border-indigo-500/50 focus:bg-navy-800 transition-all resize-none shadow-inner"
-                />
-                {/* Magnetic-style button without full physics loop for simplicity */}
-                <button
-                  onClick={saveJournal}
-                  disabled={saving || !journalText.trim()}
-                  className="absolute right-2 bottom-2 bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all disabled:opacity-0"
-                >
-                  {saving ? '...' : 'Ancrer'}
-                </button>
-              </div>
-            </div>
-          </motion.div>
-          
+      {/* ── Section 3 : Stats rapides ── */}
+      <motion.div variants={fadeUp} style={{
+        borderTop: '1px solid var(--app-border)',
+        paddingTop: '32px',
+      }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '0',
+        }}>
+          <StatCell
+            value={completedCount}
+            label="Cours complétés"
+            icon={<CheckCircle size={18} weight="duotone" style={{ color: 'var(--accent)' }} />}
+          />
+          <StatCell
+            value={0}
+            label="Jours de streak"
+            icon={<Fire size={18} weight="duotone" style={{ color: 'var(--warning)' }} />}
+            suffix="🔥"
+            bordered
+          />
+          <StatCell
+            value="—"
+            label="Score QCM moyen"
+            icon={<ChartBar size={18} weight="duotone" style={{ color: 'var(--success)' }} />}
+            bordered
+          />
+          <StatCell
+            value={0}
+            label="Cours favoris"
+            icon={<Star size={18} weight="duotone" style={{ color: 'var(--owl-gold)' }} />}
+            bordered
+          />
         </div>
-      </div>
+      </motion.div>
     </motion.div>
+  )
+}
+
+/* ── Voie Card ── */
+function VoieCard({
+  href, icon, title, badge, description, tags, ctaLabel,
+  accentColor, glowColor, locked = false,
+}: {
+  href: string
+  icon: React.ReactNode
+  title: string
+  badge?: { label: string; color: string; bg: string }
+  description: string
+  tags?: string[]
+  ctaLabel: string
+  accentColor: string
+  glowColor: string
+  locked?: boolean
+}) {
+  return (
+    <Link
+      href={href}
+      style={{
+        display: 'block',
+        background: 'var(--app-surface)',
+        border: '1px solid var(--app-border)',
+        borderRadius: '16px',
+        padding: '32px',
+        textDecoration: 'none',
+        transition: 'border-color 300ms, box-shadow 300ms, transform 300ms',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = accentColor + '50'
+        e.currentTarget.style.boxShadow = `0 8px 32px ${glowColor}`
+        e.currentTarget.style.transform = 'translateY(-2px)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = 'var(--app-border)'
+        e.currentTarget.style.boxShadow = 'none'
+        e.currentTarget.style.transform = 'translateY(0)'
+      }}
+    >
+      {/* Subtle glow bg */}
+      <div style={{
+        position: 'absolute', top: 0, right: 0,
+        width: '120px', height: '120px',
+        background: glowColor,
+        borderRadius: '50%',
+        filter: 'blur(40px)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Icon + badge */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px' }}>
+        {icon}
+        {badge && (
+          <span style={{
+            fontSize: '10px', fontWeight: 700,
+            letterSpacing: '0.8px', textTransform: 'uppercase',
+            background: badge.bg, color: badge.color,
+            padding: '3px 10px', borderRadius: '999px',
+          }}>
+            {badge.label}
+          </span>
+        )}
+        {locked && !badge && (
+          <span style={{
+            fontSize: '10px', fontWeight: 600,
+            background: 'var(--app-bg)', color: 'var(--app-text-ghost)',
+            border: '1px solid var(--app-border)',
+            padding: '3px 10px', borderRadius: '999px',
+          }}>
+            Pro
+          </span>
+        )}
+      </div>
+
+      {/* Title */}
+      <h2 style={{
+        fontSize: '20px', fontWeight: 700,
+        color: 'var(--app-text)', marginBottom: '10px',
+        letterSpacing: '-0.3px',
+      }}>
+        {title}
+      </h2>
+
+      {/* Description */}
+      <p style={{
+        fontSize: '14px', color: 'var(--app-text-muted)',
+        lineHeight: 1.6, marginBottom: '20px',
+      }}>
+        {description}
+      </p>
+
+      {/* Tags */}
+      {tags && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '20px' }}>
+          {tags.map(tag => (
+            <span key={tag} style={{
+              fontSize: '11px', fontWeight: 500,
+              background: 'var(--app-bg)',
+              border: '1px solid var(--app-border)',
+              color: 'var(--app-text-muted)',
+              padding: '3px 10px', borderRadius: '999px',
+            }}>
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* CTA */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: '6px',
+        fontSize: '14px', fontWeight: 600,
+        color: accentColor,
+      }}>
+        {ctaLabel}
+        <ArrowRight size={16} weight="bold" />
+      </div>
+    </Link>
+  )
+}
+
+/* ── Stat Cell ── */
+function StatCell({
+  value, label, icon, suffix, bordered = false,
+}: {
+  value: number | string
+  label: string
+  icon: React.ReactNode
+  suffix?: string
+  bordered?: boolean
+}) {
+  return (
+    <div style={{
+      padding: '24px 28px',
+      borderLeft: bordered ? '1px solid var(--app-border)' : 'none',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <span style={{ fontSize: '12px', color: 'var(--app-text-muted)', fontWeight: 500 }}>
+          {label}
+        </span>
+        {icon}
+      </div>
+      <span style={{
+        fontSize: '36px', fontWeight: 700,
+        fontFamily: 'var(--font-geist-mono), monospace',
+        color: 'var(--app-text)',
+        letterSpacing: '-1px',
+        lineHeight: 1,
+      }}>
+        {value}
+      </span>
+    </div>
   )
 }
