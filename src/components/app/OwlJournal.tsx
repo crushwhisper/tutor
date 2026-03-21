@@ -214,6 +214,7 @@ export default function OwlJournal() {
           display: 'flex',
           alignItems: 'center',
         }}
+        initial={{ x: 28 }}
         animate={{ x: hovered || open ? 0 : 28 }}
         transition={{ type: 'spring', stiffness: 300, damping: 28 }}
         onMouseEnter={() => !open && setHovered(true)}
@@ -244,13 +245,10 @@ export default function OwlJournal() {
           )}
         </AnimatePresence>
 
-        {/* Owl body */}
-        <motion.div
-          animate={{ rotate: hovered ? 0 : 0 }}
-          style={{ animation: 'owl-sway 6s ease-in-out infinite' }}
-        >
+        {/* Owl body — sway on a separate inner div to avoid Framer Motion transform conflict */}
+        <div style={{ animation: 'owl-sway 6s ease-in-out infinite', transformOrigin: 'bottom center' }}>
           <OwlSVG size={56} glow={hovered} />
-        </motion.div>
+        </div>
       </motion.div>
 
       {/* Spontaneous message */}
