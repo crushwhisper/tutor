@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import {
-  Dna, Heartbeat, Scalpel, FirstAid, Lightning,
+  Dna, Heartbeat, Scissors, Siren, Lightning,
 } from '@phosphor-icons/react/dist/ssr'
 import type { Module } from '@/types/database'
 
@@ -25,13 +25,13 @@ const MODULE_META: Record<string, {
     description: 'Pathologies médicales et diagnostics cliniques',
   },
   'chirurgie': {
-    Icon: Scalpel,
+    Icon: Scissors,
     color: '#E85555',
     bg: 'rgba(232,85,85,0.08)',
     description: 'Techniques chirurgicales et pathologies opératoires',
   },
   'urgences-medicales': {
-    Icon: FirstAid,
+    Icon: Siren,
     color: '#9B59B6',
     bg: 'rgba(155,89,182,0.08)',
     description: 'Prise en charge des urgences médicales',
