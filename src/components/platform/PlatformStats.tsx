@@ -35,8 +35,8 @@ export default function PlatformStats() {
   return (
     <section ref={ref} style={{
       background: '#FFFFFF',
-      borderTop: '1px solid #E5E5E5',
-      borderBottom: '1px solid #E5E5E5',
+      borderTop: '1px solid #e8d3c0',
+      borderBottom: '1px solid #e8d3c0',
       padding: '80px 0',
     }}>
       <div className="max-w-7xl mx-auto px-6">
@@ -47,19 +47,19 @@ export default function PlatformStats() {
               <div key={s.label} style={{ display: 'flex', flex: '1 1 200px' }}>
                 <div style={{ flex: 1, textAlign: 'center', padding: '0 24px' }}>
                   <div style={{
-                    fontFamily: "'Playfair Display', Georgia, serif",
+                    fontFamily: "'Halant', Georgia, serif",
                     fontSize: 'clamp(36px, 4vw, 52px)',
-                    fontWeight: 700, color: '#0A0A0A',
+                    fontWeight: 700, color: '#2b180a',
                     lineHeight: 1, marginBottom: '8px', letterSpacing: '-2px',
                   }}>
                     {s.display(count)}
                   </div>
-                  <div style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '14px', color: '#A3A3A3', fontWeight: 400 }}>
+                  <div style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '14px', color: '#94877c', fontWeight: 400 }}>
                     {s.label}
                   </div>
                 </div>
                 {i < STATS.length - 1 && (
-                  <div style={{ width: '1px', height: '48px', background: '#E5E5E5', alignSelf: 'center', flexShrink: 0 }} />
+                  <div style={{ width: '1px', height: '48px', background: '#e8d3c0', alignSelf: 'center', flexShrink: 0 }} />
                 )}
               </div>
             )

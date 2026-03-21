@@ -20,7 +20,7 @@ function Timeline({ phases, color }: { phases: typeof PHASES_180; color: string 
   return (
     <div style={{ padding: '24px 0', position: 'relative' }}>
       {/* Track */}
-      <div style={{ position: 'absolute', top: '44px', left: '24px', right: '24px', height: '2px', background: '#E5E5E5', zIndex: 0 }} />
+      <div style={{ position: 'absolute', top: '44px', left: '24px', right: '24px', height: '2px', background: '#e8d3c0', zIndex: 0 }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
         {phases.map((phase, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
@@ -30,8 +30,8 @@ function Timeline({ phases, color }: { phases: typeof PHASES_180; color: string 
               boxShadow: `0 0 12px ${color}60`,
             }} />
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '13px', fontWeight: 600, color: '#0A0A0A', marginBottom: '2px' }}>{phase.label}</div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: '#A3A3A3' }}>{phase.detail}</div>
+              <div style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '13px', fontWeight: 600, color: '#2b180a', marginBottom: '2px' }}>{phase.label}</div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: '#94877c' }}>{phase.detail}</div>
             </div>
           </div>
         ))}
@@ -55,16 +55,16 @@ function ProgrammeCard({ title, badge, badgeColor, price, phases, ctaHref, ctaLa
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
       style={{
-        background: 'white',
-        border: `1px solid ${badge === 'RECOMMANDÉ' ? 'rgba(59,130,246,0.25)' : '#E5E5E5'}`,
+        background: '#fcf6ef',
+        border: `1px solid ${badge === 'RECOMMANDÉ' ? 'rgba(0,153,255,0.25)' : '#e8d3c0'}`,
         borderRadius: '20px', padding: '40px',
-        boxShadow: badge === 'RECOMMANDÉ' ? '0 0 40px rgba(59,130,246,0.06)' : 'none',
+        boxShadow: badge === 'RECOMMANDÉ' ? '0 0 40px rgba(0,153,255,0.06)' : 'none',
         display: 'flex', flexDirection: 'column', gap: '0',
       }}
     >
       {/* Badge + title */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-        <h3 style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '22px', fontWeight: 700, color: '#0A0A0A' }}>{title}</h3>
+        <h3 style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '22px', fontWeight: 700, color: '#2b180a' }}>{title}</h3>
         <span style={{
           fontFamily: 'Outfit, system-ui, sans-serif',
           fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px',
@@ -75,7 +75,7 @@ function ProgrammeCard({ title, badge, badgeColor, price, phases, ctaHref, ctaLa
 
       {/* Price */}
       <div style={{ marginBottom: '8px' }}>
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '32px', fontWeight: 700, color: '#0A0A0A' }}>{price}</span>
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '32px', fontWeight: 700, color: '#2b180a' }}>{price}</span>
       </div>
 
       {/* Timeline */}
@@ -102,20 +102,20 @@ export default function PlatformProgrammes() {
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
-    <section id="programmes" ref={ref} style={{ background: '#F8F8F8', padding: '120px 0' }}>
+    <section id="programmes" ref={ref} style={{ background: '#f6f0e9', padding: '120px 0' }}>
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Header */}
         <div style={{ marginBottom: '64px' }}>
           <motion.p
             initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
-            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '4px', color: '#3B82F6', marginBottom: '20px' }}
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '4px', color: '#0099ff', marginBottom: '20px' }}
           >Programmes</motion.p>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }}>
-            <h2 style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontWeight: 800, fontSize: 'clamp(32px, 4vw, 52px)', color: '#0A0A0A', lineHeight: 1.1, marginBottom: '4px' }}>
+            <h2 style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontWeight: 800, fontSize: 'clamp(32px, 4vw, 52px)', color: '#2b180a', lineHeight: 1.1, marginBottom: '4px' }}>
               Un parcours clair.
             </h2>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontWeight: 700, fontSize: 'clamp(32px, 4vw, 52px)', color: '#A3A3A3', lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: "'Halant', Georgia, serif", fontStyle: 'italic', fontWeight: 700, fontSize: 'clamp(32px, 4vw, 52px)', color: '#94877c', lineHeight: 1.1 }}>
               Du jour 1 au jour du concours.
             </h2>
           </motion.div>
@@ -125,12 +125,12 @@ export default function PlatformProgrammes() {
           <ProgrammeCard
             title="Programme 6 mois"
             badge="RECOMMANDÉ"
-            badgeColor="#3B82F6"
+            badgeColor="#0099ff"
             price="79 DH / mois"
             phases={PHASES_180}
             ctaHref="/auth/signup?plan=pro"
             ctaLabel="Commencer ce programme →"
-            ctaStyle={{ background: '#3B82F6', color: 'white', boxShadow: '0 0 20px rgba(59,130,246,0.25)' }}
+            ctaStyle={{ background: '#0099ff', color: 'white', boxShadow: '0 0 20px rgba(0,153,255,0.25)' }}
             delay={0}
           />
           <ProgrammeCard
@@ -141,7 +141,7 @@ export default function PlatformProgrammes() {
             phases={PHASES_90}
             ctaHref="/auth/signup?plan=pro"
             ctaLabel="Choisir ce programme"
-            ctaStyle={{ border: '1px solid #E5E5E5', color: '#525252' }}
+            ctaStyle={{ border: '1px solid #e8d3c0', color: '#2b180a' }}
             delay={0.1}
           />
         </div>

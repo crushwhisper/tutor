@@ -15,7 +15,7 @@ import Footer from '@/components/marketing/Footer'
 
 export default function PlatformPage() {
   return (
-    <main className="antialiased overflow-x-hidden" style={{ background: '#FFFFFF', color: '#0A0A0A' }}>
+    <main className="antialiased overflow-x-hidden" style={{ background: '#fcf6ef', color: '#2b180a' }}>
       <PlatformNav />
       <PlatformHero />
       <PlatformLogos />

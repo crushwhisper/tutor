@@ -7,14 +7,14 @@ import { useState } from 'react'
 function OwlMark() {
   return (
     <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
-      <path d="M9 11 L7 4 L13 9Z" fill="rgba(255,255,255,0.35)" />
-      <path d="M23 11 L25 4 L19 9Z" fill="rgba(255,255,255,0.35)" />
-      <ellipse cx="16" cy="19" rx="10" ry="11" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
-      <circle cx="11.5" cy="17" r="3.5" fill="rgba(59,130,246,0.15)" stroke="#3B82F6" strokeWidth="1.5" />
-      <circle cx="11.5" cy="17" r="1.8" fill="#3B82F6" />
-      <circle cx="20.5" cy="17" r="3.5" fill="rgba(59,130,246,0.15)" stroke="#3B82F6" strokeWidth="1.5" />
-      <circle cx="20.5" cy="17" r="1.8" fill="#3B82F6" />
-      <path d="M14.5 21 L16 23 L17.5 21Z" fill="rgba(255,255,255,0.35)" />
+      <path d="M9 11 L7 4 L13 9Z" fill="rgba(43,24,10,0.25)" />
+      <path d="M23 11 L25 4 L19 9Z" fill="rgba(43,24,10,0.25)" />
+      <ellipse cx="16" cy="19" rx="10" ry="11" fill="none" stroke="rgba(43,24,10,0.25)" strokeWidth="1.5" />
+      <circle cx="11.5" cy="17" r="3.5" fill="rgba(0,153,255,0.12)" stroke="#0099ff" strokeWidth="1.5" />
+      <circle cx="11.5" cy="17" r="1.8" fill="#0099ff" />
+      <circle cx="20.5" cy="17" r="3.5" fill="rgba(0,153,255,0.12)" stroke="#0099ff" strokeWidth="1.5" />
+      <circle cx="20.5" cy="17" r="1.8" fill="#0099ff" />
+      <path d="M14.5 21 L16 23 L17.5 21Z" fill="rgba(43,24,10,0.25)" />
     </svg>
   )
 }
@@ -25,7 +25,7 @@ function NavLink({ href, children, isExternal }: { href: string; children: React
     fontFamily: 'Outfit, system-ui, sans-serif',
     fontSize: '14px',
     fontWeight: 400,
-    color: hovered ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)',
+    color: hovered ? '#2b180a' : '#94877c',
     textDecoration: 'none',
     transition: 'color 250ms',
     cursor: 'pointer',
@@ -52,33 +52,25 @@ export default function ScienceHero() {
   const [ctaHovered, setCtaHovered] = useState(false)
 
   return (
-    <section style={{ minHeight: '100dvh', position: 'relative', display: 'flex', flexDirection: 'column', background: '#0A0A0A' }}>
+    <section style={{ minHeight: '100dvh', position: 'relative', display: 'flex', flexDirection: 'column', background: '#fcf6ef' }}>
 
-      {/* Mesh background */}
+      {/* Warm mesh background */}
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
         <div className="science-orb science-orb-1" />
         <div className="science-orb science-orb-2" />
         <div className="science-orb science-orb-3" />
-        {/* Top vignette */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '25%', background: 'linear-gradient(to bottom, rgba(10,10,10,0.9), transparent)' }} />
-        {/* Bottom vignette */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%', background: 'linear-gradient(to top, #0A0A0A 40%, transparent)' }} />
-        {/* Subtle grid overlay */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
-        }} />
+        {/* Bottom fade */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%', background: 'linear-gradient(to top, #fcf6ef 40%, transparent)' }} />
       </div>
 
-      {/* Navigation — absolute, not fixed */}
+      {/* Navigation */}
       <nav style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, padding: '32px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
           <OwlMark />
           <span style={{
             fontFamily: 'Outfit, system-ui, sans-serif',
             fontWeight: 700, fontSize: '16px',
-            color: 'rgba(255,255,255,0.9)',
+            color: '#2b180a',
             letterSpacing: '-0.02em',
           }}>TUTOR</span>
         </Link>
@@ -89,20 +81,21 @@ export default function ScienceHero() {
           <Link href="/auth/signup" style={{
             fontFamily: 'Outfit, system-ui, sans-serif',
             fontSize: '13px', fontWeight: 500,
-            color: 'white',
+            color: '#2b180a',
             textDecoration: 'none',
-            border: '1px solid rgba(255,255,255,0.15)',
-            borderRadius: '8px',
-            padding: '8px 18px',
-            transition: 'border-color 250ms, background 250ms',
+            border: '1px solid #e8d3c0',
+            borderRadius: '999px',
+            padding: '8px 20px',
+            background: 'rgba(255,255,255,0.6)',
+            transition: 'all 250ms',
           }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.4)'
-              ;(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'
+              (e.currentTarget as HTMLElement).style.borderColor = '#0099ff'
+              ;(e.currentTarget as HTMLElement).style.color = '#0099ff'
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.15)'
-              ;(e.currentTarget as HTMLElement).style.background = 'transparent'
+              (e.currentTarget as HTMLElement).style.borderColor = '#e8d3c0'
+              ;(e.currentTarget as HTMLElement).style.color = '#2b180a'
             }}
           >
             Connexion
@@ -110,7 +103,7 @@ export default function ScienceHero() {
         </div>
       </nav>
 
-      {/* Hero content — vertically centered */}
+      {/* Hero content */}
       <div style={{
         flex: 1, display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
@@ -125,14 +118,14 @@ export default function ScienceHero() {
           transition={{ duration: 1, delay: 0.5 }}
           style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '48px' }}
         >
-          <div style={{ width: '40px', height: '1px', background: 'rgba(59,130,246,0.5)' }} />
+          <div style={{ width: '40px', height: '1px', background: '#e8d3c0' }} />
           <span style={{
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: '11px', fontWeight: 500,
             textTransform: 'uppercase', letterSpacing: '4px',
-            color: 'rgba(255,255,255,0.4)',
+            color: '#94877c',
           }}>Fondé sur la recherche</span>
-          <div style={{ width: '40px', height: '1px', background: 'rgba(59,130,246,0.5)' }} />
+          <div style={{ width: '40px', height: '1px', background: '#e8d3c0' }} />
         </motion.div>
 
         {/* Line 1 */}
@@ -142,10 +135,10 @@ export default function ScienceHero() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              fontFamily: "'Playfair Display', Georgia, serif",
+              fontFamily: "'Halant', Georgia, serif",
               fontSize: 'clamp(52px, 8vw, 96px)',
-              fontWeight: 700, color: 'white',
-              lineHeight: 1.05, letterSpacing: '-3px',
+              fontWeight: 600, color: '#2b180a',
+              lineHeight: 1.05, letterSpacing: '-2px',
               marginBottom: '4px',
             }}
           >
@@ -153,18 +146,18 @@ export default function ScienceHero() {
           </motion.h1>
         </div>
 
-        {/* Line 2 — italic, slightly dimmer */}
+        {/* Line 2 — italic, muted brown */}
         <div style={{ overflow: 'hidden', marginBottom: '40px' }}>
           <motion.h1
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              fontFamily: "'Playfair Display', Georgia, serif",
+              fontFamily: "'Halant', Georgia, serif",
               fontSize: 'clamp(52px, 8vw, 96px)',
-              fontWeight: 700, fontStyle: 'italic',
-              color: 'rgba(255,255,255,0.65)',
-              lineHeight: 1.05, letterSpacing: '-3px',
+              fontWeight: 400, fontStyle: 'italic',
+              color: '#94877c',
+              lineHeight: 1.05, letterSpacing: '-2px',
             }}
           >
             la réussite médicale.
@@ -179,7 +172,7 @@ export default function ScienceHero() {
           style={{
             fontFamily: 'Outfit, system-ui, sans-serif',
             fontSize: '18px', fontWeight: 300,
-            color: 'rgba(255,255,255,0.45)',
+            color: '#94877c',
             maxWidth: '520px', lineHeight: 1.75,
             marginBottom: '56px',
           }}
@@ -201,13 +194,12 @@ export default function ScienceHero() {
             style={{
               fontFamily: 'Outfit, system-ui, sans-serif',
               fontSize: '15px', fontWeight: 500,
-              color: ctaHovered ? '#0A0A0A' : 'white',
+              color: ctaHovered ? 'white' : '#2b180a',
               textDecoration: 'none',
-              border: '1px solid rgba(255,255,255,0.3)',
+              border: '1px solid #2b180a',
               borderRadius: '999px',
               padding: '14px 36px',
-              background: ctaHovered ? 'white' : 'transparent',
-              boxShadow: ctaHovered ? '0 0 40px rgba(255,255,255,0.15)' : 'none',
+              background: ctaHovered ? '#2b180a' : 'transparent',
               transition: 'all 400ms cubic-bezier(0.16,1,0.3,1)',
               display: 'inline-block',
             }}
@@ -231,13 +223,13 @@ export default function ScienceHero() {
         <span style={{
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: '10px', letterSpacing: '3px',
-          color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase',
+          color: '#e8d3c0', textTransform: 'uppercase',
         }}>Scroll</span>
         <svg
           width="16" height="16" viewBox="0 0 16 16" fill="none"
           className="animate-bounce-scroll"
         >
-          <path d="M2 5l6 6 6-6" stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M2 5l6 6 6-6" stroke="#dab697" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </motion.div>
     </section>

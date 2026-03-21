@@ -7,13 +7,13 @@ import { createClient } from '@/lib/supabase/client'
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#1A1A1A',
-  border: '1px solid rgba(255,255,255,0.08)',
+  background: 'rgba(252,246,239,0.06)',
+  border: '1px solid rgba(232,211,192,0.15)',
   borderRadius: '12px',
   padding: '13px 16px',
   fontFamily: 'Outfit, system-ui, sans-serif',
   fontSize: '14px',
-  color: 'white',
+  color: '#fcf6ef',
   outline: 'none',
   transition: 'border-color 200ms',
   boxSizing: 'border-box',
@@ -56,27 +56,27 @@ export default function PlatformCTAForm() {
 
   const focusStyle = (field: string): React.CSSProperties => ({
     ...inputStyle,
-    borderColor: focused === field ? 'rgba(59,130,246,0.5)' : 'rgba(255,255,255,0.08)',
-    boxShadow: focused === field ? '0 0 0 3px rgba(59,130,246,0.08)' : 'none',
+    borderColor: focused === field ? 'rgba(0,153,255,0.5)' : 'rgba(232,211,192,0.15)',
+    boxShadow: focused === field ? '0 0 0 3px rgba(0,153,255,0.08)' : 'none',
   })
 
   return (
-    <section style={{ background: '#0A0A0A', padding: '120px 0' }}>
+    <section style={{ background: '#2b180a', padding: '120px 0' }}>
       <div className="max-w-7xl mx-auto px-6">
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
 
           {/* Badge */}
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
-            border: '1px solid rgba(59,130,246,0.25)',
+            border: '1px solid rgba(0,153,255,0.25)',
             borderRadius: '999px', padding: '6px 18px', marginBottom: '40px',
           }}>
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3B82F6' }} />
-            <span style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>Inscription gratuite</span>
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#0099ff' }} />
+            <span style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '13px', color: 'rgba(218,182,151,0.7)' }}>Inscription gratuite</span>
           </div>
 
           <h2 style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
+            fontFamily: "'Halant', Georgia, serif",
             fontSize: 'clamp(36px, 5vw, 60px)',
             fontWeight: 700, color: 'white',
             letterSpacing: '-2px', lineHeight: 1.1, marginBottom: '16px',
@@ -86,7 +86,7 @@ export default function PlatformCTAForm() {
           <p style={{
             fontFamily: 'Outfit, system-ui, sans-serif',
             fontSize: '17px', fontWeight: 300,
-            color: 'rgba(255,255,255,0.4)',
+            color: 'rgba(218,182,151,0.7)',
             marginBottom: '56px',
           }}>
             Créez votre compte en 30 secondes.
@@ -123,47 +123,47 @@ export default function PlatformCTAForm() {
             <select value={form.concours} onChange={set('concours')} style={{
               ...inputStyle,
               marginBottom: '20px',
-              color: form.concours ? 'white' : 'rgba(255,255,255,0.3)',
+              color: form.concours ? '#fcf6ef' : 'rgba(218,182,151,0.4)',
               appearance: 'none',
             }}>
               <option value="" disabled>Quel concours préparez-vous ?</option>
-              {CONCOURS.map((c) => <option key={c} value={c} style={{ color: '#0A0A0A', background: 'white' }}>{c}</option>)}
+              {CONCOURS.map((c) => <option key={c} value={c} style={{ color: '#2b180a', background: '#fcf6ef' }}>{c}</option>)}
             </select>
 
             <button type="submit" disabled={loading} style={{
               width: '100%', padding: '16px',
-              background: '#3B82F6', color: 'white',
+              background: '#0099ff', color: 'white',
               fontFamily: 'Outfit, system-ui, sans-serif',
               fontSize: '16px', fontWeight: 600,
               border: 'none', borderRadius: '12px',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.7 : 1,
-              boxShadow: '0 0 0 1px rgba(59,130,246,0.4), 0 0 40px rgba(59,130,246,0.25)',
+              boxShadow: '0 0 0 1px rgba(0,153,255,0.4), 0 0 40px rgba(0,153,255,0.25)',
               transition: 'box-shadow 300ms, transform 200ms',
               marginBottom: '16px',
             }}
               onMouseEnter={(e) => {
                 if (!loading) {
-                  (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 1px rgba(59,130,246,0.6), 0 0 60px rgba(59,130,246,0.4)'
+                  (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 1px rgba(0,153,255,0.6), 0 0 60px rgba(0,153,255,0.4)'
                   ;(e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'
                 }
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 1px rgba(59,130,246,0.4), 0 0 40px rgba(59,130,246,0.25)'
+                (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 1px rgba(0,153,255,0.4), 0 0 40px rgba(0,153,255,0.25)'
                 ;(e.currentTarget as HTMLElement).style.transform = 'translateY(0)'
               }}
             >
               {loading ? 'Création...' : 'Créer mon compte →'}
             </button>
 
-            <p style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '12px', color: 'rgba(255,255,255,0.25)', marginBottom: '12px' }}>
+            <p style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '12px', color: 'rgba(218,182,151,0.4)', marginBottom: '12px' }}>
               En créant un compte, vous acceptez nos{' '}
-              <Link href="/legal/cgu" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'underline' }}>CGU</Link>
+              <Link href="/legal/cgu" style={{ color: 'rgba(218,182,151,0.6)', textDecoration: 'underline' }}>CGU</Link>
               {' '}et notre{' '}
-              <Link href="/legal/confidentialite" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'underline' }}>politique de confidentialité</Link>.
+              <Link href="/legal/confidentialite" style={{ color: 'rgba(218,182,151,0.6)', textDecoration: 'underline' }}>politique de confidentialité</Link>.
             </p>
 
-            <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '12px', color: 'rgba(255,255,255,0.3)' }}>
+            <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '12px', color: 'rgba(218,182,151,0.4)' }}>
               Aucune carte bancaire requise.
             </p>
           </form>

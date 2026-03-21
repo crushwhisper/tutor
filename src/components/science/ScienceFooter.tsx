@@ -9,8 +9,8 @@ export default function ScienceFooter() {
 
   return (
     <footer style={{
-      background: '#0A0A0A',
-      borderTop: '1px solid rgba(255,255,255,0.05)',
+      background: '#fcf6ef',
+      borderTop: '1px solid #e8d3c0',
       padding: '40px 48px',
       display: 'flex',
       alignItems: 'center',
@@ -21,7 +21,7 @@ export default function ScienceFooter() {
       <p style={{
         fontFamily: 'Outfit, system-ui, sans-serif',
         fontSize: '13px',
-        color: 'rgba(255,255,255,0.2)',
+        color: '#dab697',
       }}>
         © 2026 TUTOR
       </p>
@@ -34,12 +34,12 @@ export default function ScienceFooter() {
             style={{
               fontFamily: 'Outfit, system-ui, sans-serif',
               fontSize: '13px',
-              color: 'rgba(255,255,255,0.25)',
+              color: '#94877c',
               textDecoration: 'none',
               transition: 'color 200ms',
             }}
-            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)')}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.25)')}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = '#2b180a')}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = '#94877c')}
           >
             {s.label}
           </a>

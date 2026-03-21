@@ -34,11 +34,11 @@ export default function PlatformHowItWorks() {
         <div style={{ textAlign: 'center', marginBottom: '80px' }}>
           <motion.p
             initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
-            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '4px', color: '#3B82F6', marginBottom: '20px' }}
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '4px', color: '#0099ff', marginBottom: '20px' }}
           >Comment ça marche</motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }}
-            style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontWeight: 800, fontSize: 'clamp(28px, 3.5vw, 44px)', color: '#0A0A0A' }}
+            style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontWeight: 800, fontSize: 'clamp(28px, 3.5vw, 44px)', color: '#2b180a' }}
           >
             Simple, structuré, efficace.
           </motion.h2>
@@ -57,16 +57,16 @@ export default function PlatformHowItWorks() {
                   transition={{ duration: 0.6, delay: 0.2 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
                   style={{
                     width: '64px', height: '64px', borderRadius: '50%',
-                    border: inView ? '2px solid #3B82F6' : '2px solid #E5E5E5',
-                    background: 'white',
+                    border: inView ? '2px solid #0099ff' : '2px solid #e8d3c0',
+                    background: '#fcf6ef',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: inView ? '0 0 20px rgba(59,130,246,0.15)' : 'none',
+                    boxShadow: inView ? '0 0 20px rgba(0,153,255,0.15)' : 'none',
                     transition: 'border-color 600ms, box-shadow 600ms',
                     transitionDelay: `${i * 150}ms`,
                     flexShrink: 0,
                   }}
                 >
-                  <step.Icon size={24} style={{ color: '#3B82F6' }} />
+                  <step.Icon size={24} style={{ color: '#0099ff' }} />
                 </motion.div>
 
                 {/* Text */}
@@ -76,9 +76,9 @@ export default function PlatformHowItWorks() {
                   transition={{ duration: 0.7, delay: 0.35 + i * 0.15 }}
                   style={{ textAlign: 'center', maxWidth: '220px' }}
                 >
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: '#A3A3A3', marginBottom: '8px' }}>{step.num}</div>
-                  <h3 style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '18px', fontWeight: 700, color: '#0A0A0A', marginBottom: '8px' }}>{step.title}</h3>
-                  <p style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '14px', color: '#737373', lineHeight: 1.7 }}>{step.desc}</p>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: '#94877c', marginBottom: '8px' }}>{step.num}</div>
+                  <h3 style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '18px', fontWeight: 700, color: '#2b180a', marginBottom: '8px' }}>{step.title}</h3>
+                  <p style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '14px', color: '#94877c', lineHeight: 1.7 }}>{step.desc}</p>
                 </motion.div>
               </div>
 
@@ -89,7 +89,7 @@ export default function PlatformHowItWorks() {
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: inView ? 1 : 0 }}
                     transition={{ duration: 0.7, delay: 0.5 + i * 0.3, ease: 'easeInOut' }}
-                    style={{ height: '2px', background: 'linear-gradient(to right, #3B82F6, #8B5CF6)', transformOrigin: 'left center' }}
+                    style={{ height: '2px', background: 'linear-gradient(to right, #0099ff, #8B5CF6)', transformOrigin: 'left center' }}
                   />
                 </div>
               )}

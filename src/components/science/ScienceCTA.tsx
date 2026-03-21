@@ -11,7 +11,7 @@ export default function ScienceCTA() {
 
   return (
     <section ref={ref} style={{
-      background: 'linear-gradient(to bottom, #0A0A0A, #0D0D10)',
+      background: '#fcf6ef',
       padding: '160px 0',
       textAlign: 'center',
     }}>
@@ -24,20 +24,19 @@ export default function ScienceCTA() {
           transition={{ duration: 0.6 }}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: '12px',
-            border: '1px solid rgba(255,255,255,0.08)',
+            border: '1px solid #e8d3c0',
             borderRadius: '999px',
-            padding: '6px 18px',
+            padding: '6px 20px',
             marginBottom: '48px',
+            background: 'rgba(255,255,255,0.6)',
           }}
         >
-          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3B82F6' }} />
+          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#0099ff' }} />
           <span style={{
             fontFamily: 'Outfit, system-ui, sans-serif',
             fontSize: '13px', fontWeight: 500,
-            color: 'rgba(255,255,255,0.4)',
-          }}>
-            Inscription gratuite
-          </span>
+            color: '#94877c',
+          }}>Inscription gratuite</span>
         </motion.div>
 
         {/* Headline */}
@@ -46,17 +45,16 @@ export default function ScienceCTA() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
+            fontFamily: "'Halant', Georgia, serif",
             fontSize: 'clamp(36px, 5vw, 60px)',
-            fontWeight: 700, color: 'white',
-            lineHeight: 1.1, letterSpacing: '-2px',
+            fontWeight: 600, color: '#2b180a',
+            lineHeight: 1.1, letterSpacing: '-1px',
             marginBottom: '20px',
           }}
         >
           Prêt à appliquer la science ?
         </motion.h2>
 
-        {/* Sub */}
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -64,7 +62,7 @@ export default function ScienceCTA() {
           style={{
             fontFamily: 'Outfit, system-ui, sans-serif',
             fontSize: '17px', fontWeight: 300,
-            color: 'rgba(255,255,255,0.4)',
+            color: '#94877c',
             marginBottom: '56px', lineHeight: 1.7,
           }}
         >
@@ -85,14 +83,14 @@ export default function ScienceCTA() {
               fontFamily: 'Outfit, system-ui, sans-serif',
               fontSize: '16px', fontWeight: 600,
               color: 'white', textDecoration: 'none',
-              background: '#3B82F6',
+              background: hovered ? '#007acc' : '#0099ff',
               padding: '18px 44px',
-              borderRadius: '14px',
+              borderRadius: '999px',
               display: 'inline-block',
               boxShadow: hovered
-                ? '0 0 0 1px rgba(59,130,246,0.4), 0 0 50px rgba(59,130,246,0.4), 0 0 100px rgba(59,130,246,0.15)'
-                : '0 0 0 1px rgba(59,130,246,0.2), 0 0 30px rgba(59,130,246,0.2), 0 0 60px rgba(59,130,246,0.08)',
-              transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
+                ? '0 0 0 4px rgba(0,153,255,0.15), 0 8px 24px rgba(0,153,255,0.3)'
+                : '0 4px 16px rgba(0,153,255,0.2)',
+              transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
               transition: 'all 400ms cubic-bezier(0.16,1,0.3,1)',
             }}
           >
@@ -100,15 +98,13 @@ export default function ScienceCTA() {
           </Link>
         </motion.div>
 
-        {/* Fine print */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}
           style={{
             fontFamily: 'Outfit, system-ui, sans-serif',
-            fontSize: '13px',
-            color: 'rgba(255,255,255,0.2)',
+            fontSize: '13px', color: '#dab697',
             marginTop: '24px',
           }}
         >

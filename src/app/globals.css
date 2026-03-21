@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Halant:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 @import "tailwindcss";
 @source "../";
@@ -44,7 +44,15 @@
 
   --transition-spring: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --font-display: 'Playfair Display', Georgia, serif;
+  /* Avalon palette */
+  --avalon-cream: #fcf6ef;
+  --avalon-cream-2: #f6f0e9;
+  --avalon-brown: #2b180a;
+  --avalon-brown-muted: #94877c;
+  --avalon-border: #e8d3c0;
+  --avalon-accent: #0099ff;
+
+  --font-display: 'Halant', Georgia, serif;
   --font-ui: 'Outfit', system-ui, sans-serif;
 }
 
@@ -66,12 +74,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Marketing wrapper */
+/* Marketing wrapper — Avalon palette */
 .marketing-wrapper {
-  background: #FFFFFF;
-  color: #09090B;
+  background: var(--avalon-cream);
+  color: var(--avalon-brown);
   font-family: var(--font-ui);
-  --font-display: 'Playfair Display', Georgia, serif;
+  --font-display: 'Halant', Georgia, serif;
   --font-ui: 'Outfit', system-ui, sans-serif;
 }
 
@@ -188,7 +196,7 @@ body {
 .science-orb-1 {
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0,153,255,0.10) 0%, transparent 70%);
   bottom: -100px;
   right: -100px;
   animation: science-orb-1 18s ease-in-out infinite;
@@ -196,7 +204,7 @@ body {
 .science-orb-2 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(218,182,151,0.35) 0%, transparent 70%);
   top: -80px;
   left: -80px;
   animation: science-orb-2 22s ease-in-out infinite;
@@ -204,7 +212,7 @@ body {
 .science-orb-3 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(232,211,192,0.30) 0%, transparent 70%);
   top: 40%;
   left: 40%;
   animation: science-orb-3 26s ease-in-out infinite;

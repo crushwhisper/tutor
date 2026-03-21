@@ -43,7 +43,7 @@ function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.5 }}
-      style={{ borderBottom: '1px solid #E5E5E5' }}
+      style={{ borderBottom: '1px solid #e8d3c0' }}
     >
       <button
         onClick={() => setOpen(!open)}
@@ -56,12 +56,12 @@ function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
       >
         <span style={{
           fontFamily: 'Outfit, system-ui, sans-serif',
-          fontSize: '16px', fontWeight: 600, color: '#0A0A0A',
+          fontSize: '16px', fontWeight: 600, color: '#2b180a',
         }}>{q}</span>
         <CaretDown
           size={18}
           style={{
-            color: '#A3A3A3', flexShrink: 0,
+            color: '#94877c', flexShrink: 0,
             transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 300ms cubic-bezier(0.16,1,0.3,1)',
           }}
@@ -78,7 +78,7 @@ function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
           >
             <p style={{
               fontFamily: 'Outfit, system-ui, sans-serif',
-              fontSize: '15px', color: '#737373', lineHeight: 1.75,
+              fontSize: '15px', color: '#94877c', lineHeight: 1.75,
               paddingBottom: '20px',
             }}>{a}</p>
           </motion.div>
@@ -93,27 +93,27 @@ export default function PlatformFAQ() {
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
-    <section ref={ref} style={{ background: '#F8F8F8', padding: '120px 0' }}>
+    <section ref={ref} style={{ background: '#f6f0e9', padding: '120px 0' }}>
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Header */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '64px', textAlign: 'center' }}>
           <motion.p
             initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
-            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '4px', color: '#3B82F6', marginBottom: '20px' }}
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '4px', color: '#0099ff', marginBottom: '20px' }}
           >FAQ</motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }}
-            style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontWeight: 800, fontSize: 'clamp(28px, 3.5vw, 44px)', color: '#0A0A0A', marginBottom: '12px' }}
+            style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontWeight: 800, fontSize: 'clamp(28px, 3.5vw, 44px)', color: '#2b180a', marginBottom: '12px' }}
           >
             Vos questions, nos réponses.
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.15 }}
-            style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '15px', color: '#A3A3A3' }}
+            style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '15px', color: '#94877c' }}
           >
             Tout ce que vous devez savoir.{' '}
-            <a href="#contact" style={{ color: '#3B82F6', textDecoration: 'none' }}>Une autre question ?</a>
+            <a href="#contact" style={{ color: '#0099ff', textDecoration: 'none' }}>Une autre question ?</a>
           </motion.p>
         </div>
 
