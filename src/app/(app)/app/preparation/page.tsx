@@ -1,15 +1,48 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import {
+  Dna, Heartbeat, Scalpel, FirstAid, Lightning,
+} from '@phosphor-icons/react/dist/ssr'
 import type { Module } from '@/types/database'
 
-const MODULE_META = [
-  { slug: 'anatomie-biologie', icon: '🧬', color: '#4A90D9', description: 'Bases fondamentales en anatomie et biologie médicale' },
-  { slug: 'medecine', icon: '🏥', color: '#E8A83E', description: 'Pathologies médicales et diagnostics cliniques' },
-  { slug: 'chirurgie', icon: '🔬', color: '#E85555', description: 'Techniques chirurgicales et pathologies opératoires' },
-  { slug: 'urgences-medicales', icon: '🚨', color: '#9B59B6', description: 'Prise en charge des urgences médicales' },
-  { slug: 'urgences-chirurgicales', icon: '⚡', color: '#E67E22', description: 'Prise en charge des urgences chirurgicales' },
-]
+const MODULE_META: Record<string, {
+  Icon: React.ElementType
+  color: string
+  bg: string
+  description: string
+}> = {
+  'anatomie-biologie': {
+    Icon: Dna,
+    color: '#4A90D9',
+    bg: 'rgba(74,144,217,0.08)',
+    description: 'Bases fondamentales en anatomie et biologie médicale',
+  },
+  'medecine': {
+    Icon: Heartbeat,
+    color: '#E8A83E',
+    bg: 'rgba(232,168,62,0.08)',
+    description: 'Pathologies médicales et diagnostics cliniques',
+  },
+  'chirurgie': {
+    Icon: Scalpel,
+    color: '#E85555',
+    bg: 'rgba(232,85,85,0.08)',
+    description: 'Techniques chirurgicales et pathologies opératoires',
+  },
+  'urgences-medicales': {
+    Icon: FirstAid,
+    color: '#9B59B6',
+    bg: 'rgba(155,89,182,0.08)',
+    description: 'Prise en charge des urgences médicales',
+  },
+  'urgences-chirurgicales': {
+    Icon: Lightning,
+    color: '#E67E22',
+    bg: 'rgba(230,126,34,0.08)',
+    description: 'Prise en charge des urgences chirurgicales',
+  },
+}
 
 type ModuleWithCount = Module & { courses: { count: number }[] }
 
@@ -31,59 +64,146 @@ export default async function PreparationPage() {
     .single()
 
   const isPro = userProfile?.subscription_plan === 'pro' && userProfile?.subscription_status === 'active'
+  const list = (modules ?? []) as ModuleWithCount[]
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold text-white mb-1">Préparation Libre</h1>
-        <p className="text-muted text-sm">Choisissez un module pour accéder aux cours.</p>
+    <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+
+      {/* Header */}
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{
+          fontSize: '22px', fontWeight: 700,
+          color: 'var(--app-text)', marginBottom: '6px',
+          letterSpacing: '-0.3px',
+        }}>
+          Préparation Libre
+        </h1>
+        <p style={{ fontSize: '14px', color: 'var(--app-text-muted)' }}>
+          Choisissez un module pour accéder aux cours.
+        </p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {((modules ?? []) as ModuleWithCount[]).map((mod) => {
-          const meta = MODULE_META.find((m) => m.slug === mod.slug)
-          const courseCount = mod.courses?.[0]?.count ?? 0
+      {/* Module grid */}
+      {list.length === 0 ? (
+        <div style={{
+          textAlign: 'center', padding: '80px 40px',
+          color: 'var(--app-text-muted)', fontSize: '14px',
+        }}>
+          Aucun module disponible pour le moment.
+        </div>
+      ) : (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gap: '16px',
+          marginBottom: '32px',
+        }}>
+          {list.map((mod) => {
+            const meta = MODULE_META[mod.slug]
+            const Icon = meta?.Icon
+            const courseCount = mod.courses?.[0]?.count ?? 0
 
-          return (
-            <Link
-              key={mod.id}
-              href={`/app/preparation/${mod.slug}`}
-              className="glass-card p-6 hover:border-gold/30 transition-all group block"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
-                  style={{ backgroundColor: `${meta?.color ?? '#e8a83e'}20` }}
-                >
-                  {meta?.icon ?? '📚'}
+            return (
+              <Link
+                key={mod.id}
+                href={`/app/preparation/${mod.slug}`}
+                style={{
+                  display: 'block',
+                  background: 'var(--app-surface)',
+                  border: '1px solid var(--app-border)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  textDecoration: 'none',
+                  transition: 'border-color 200ms, box-shadow 200ms',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = meta?.color ?? 'var(--accent)'
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.06)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--app-border)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+              >
+                {/* Icon + count */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <div style={{
+                    width: '48px', height: '48px', borderRadius: '14px',
+                    background: meta?.bg ?? 'var(--accent-soft)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    {Icon && <Icon size={24} weight="duotone" style={{ color: meta?.color }} />}
+                  </div>
+                  <span style={{
+                    fontSize: '12px', color: 'var(--app-text-ghost)',
+                    background: 'var(--app-bg)', border: '1px solid var(--app-border)',
+                    borderRadius: '999px', padding: '3px 10px',
+                  }}>
+                    {courseCount} cours
+                  </span>
                 </div>
-                <span className="text-xs text-muted">{courseCount} cours</span>
-              </div>
-              <h3 className="text-white font-semibold mb-2 group-hover:text-gold transition-colors">
-                {mod.name}
-              </h3>
-              <p className="text-muted text-sm leading-relaxed">
-                {meta?.description ?? mod.description}
-              </p>
-              <div className="mt-4 flex items-center text-gold text-sm font-medium">
-                Explorer →
-              </div>
-            </Link>
-          )
-        })}
-      </div>
 
+                {/* Name */}
+                <h3 style={{
+                  fontSize: '15px', fontWeight: 600,
+                  color: 'var(--app-text)', marginBottom: '8px',
+                }}>
+                  {mod.name}
+                </h3>
+
+                {/* Description */}
+                <p style={{
+                  fontSize: '13px', color: 'var(--app-text-muted)',
+                  lineHeight: 1.5, marginBottom: '16px',
+                }}>
+                  {meta?.description ?? mod.description}
+                </p>
+
+                {/* CTA */}
+                <div style={{
+                  fontSize: '13px', fontWeight: 600,
+                  color: meta?.color ?? 'var(--accent)',
+                  display: 'flex', alignItems: 'center', gap: '4px',
+                }}>
+                  Explorer →
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Pro upgrade banner — only for Starter */}
       {!isPro && (
-        <div className="glass-card p-6 border-gold/30 bg-gold/5">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-white font-semibold mb-1">Accès limité</h3>
-              <p className="text-muted text-sm">Certains cours sont réservés aux membres Pro. Passez à Pro pour tout débloquer.</p>
-            </div>
-            <Link href="/app/settings?tab=subscription" className="btn-primary shrink-0 text-sm">
-              Passer à Pro
-            </Link>
+        <div style={{
+          background: 'var(--accent-soft)',
+          border: '1px solid var(--accent-glow)',
+          borderRadius: '14px',
+          padding: '20px 24px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px',
+        }}>
+          <div>
+            <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--app-text)', marginBottom: '4px' }}>
+              Accès limité
+            </p>
+            <p style={{ fontSize: '13px', color: 'var(--app-text-muted)' }}>
+              Certains cours sont réservés aux membres Pro. Passez à Pro pour tout débloquer.
+            </p>
           </div>
+          <Link
+            href="/pricing"
+            style={{
+              flexShrink: 0,
+              background: 'var(--accent)', color: 'white',
+              padding: '10px 18px', borderRadius: '10px',
+              fontSize: '13px', fontWeight: 600,
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Passer à Pro
+          </Link>
         </div>
       )}
     </div>
