@@ -18,34 +18,22 @@ interface Props {
   isPro: boolean
 }
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } },
-}
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.07 } },
-}
-
-function todayLabel() {
-  return new Date().toLocaleDateString('fr-FR', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-  })
-}
-
 export default function DashboardClient({ profile, completedCount, isPro }: Props) {
   const firstName = profile?.full_name?.split(' ')[0] ?? 'Étudiant'
-  const date = todayLabel()
+  const date = new Date().toLocaleDateString('fr-FR', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  })
 
   return (
-    <motion.div
-      variants={stagger}
-      initial="hidden"
-      animate="visible"
-      style={{ maxWidth: '960px', margin: '0 auto' }}
-    >
+    <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+
       {/* ── Section 1 : Bienvenue ── */}
-      <motion.div variants={fadeUp} style={{ marginBottom: '40px' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut', delay: 0 }}
+        style={{ marginBottom: '40px' }}
+      >
         <h1 style={{
           fontSize: '28px', fontWeight: 700,
           color: 'var(--app-text)', letterSpacing: '-0.5px',
@@ -59,13 +47,17 @@ export default function DashboardClient({ profile, completedCount, isPro }: Prop
       </motion.div>
 
       {/* ── Section 2 : Les 3 voies ── */}
-      <motion.div variants={fadeUp} style={{ marginBottom: '40px' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut', delay: 0.08 }}
+        style={{ marginBottom: '40px' }}
+      >
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: '20px',
         }}>
-          {/* Carte 1 — Préparation Libre */}
           <VoieCard
             href="/app/preparation"
             icon={<Books size={32} weight="duotone" style={{ color: 'var(--accent)' }} />}
@@ -76,8 +68,6 @@ export default function DashboardClient({ profile, completedCount, isPro }: Prop
             accentColor="var(--accent)"
             glowColor="rgba(59,130,246,0.12)"
           />
-
-          {/* Carte 2 — Programme 3 Mois */}
           <VoieCard
             href="/app/programmes/90"
             icon={<Lightning size={32} weight="duotone" style={{ color: 'var(--warning)' }} />}
@@ -89,8 +79,6 @@ export default function DashboardClient({ profile, completedCount, isPro }: Prop
             glowColor="rgba(245,158,11,0.10)"
             locked={!isPro}
           />
-
-          {/* Carte 3 — Programme 6 Mois */}
           <VoieCard
             href="/app/programmes/180"
             icon={<CalendarDots size={32} weight="duotone" style={{ color: 'var(--success)' }} />}
@@ -106,15 +94,13 @@ export default function DashboardClient({ profile, completedCount, isPro }: Prop
       </motion.div>
 
       {/* ── Section 3 : Stats rapides ── */}
-      <motion.div variants={fadeUp} style={{
-        borderTop: '1px solid var(--app-border)',
-        paddingTop: '32px',
-      }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '0',
-        }}>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut', delay: 0.16 }}
+        style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}
+      >
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }}>
           <StatCell
             value={completedCount}
             label="Cours complétés"
@@ -124,7 +110,6 @@ export default function DashboardClient({ profile, completedCount, isPro }: Prop
             value={0}
             label="Jours de streak"
             icon={<Fire size={18} weight="duotone" style={{ color: 'var(--warning)' }} />}
-            suffix="🔥"
             bordered
           />
           <StatCell
@@ -141,7 +126,7 @@ export default function DashboardClient({ profile, completedCount, isPro }: Prop
           />
         </div>
       </motion.div>
-    </motion.div>
+    </div>
   )
 }
 
@@ -186,7 +171,7 @@ function VoieCard({
         e.currentTarget.style.transform = 'translateY(0)'
       }}
     >
-      {/* Subtle glow bg */}
+      {/* Ambient glow */}
       <div style={{
         position: 'absolute', top: 0, right: 0,
         width: '120px', height: '120px',
@@ -201,8 +186,8 @@ function VoieCard({
         {icon}
         {badge && (
           <span style={{
-            fontSize: '10px', fontWeight: 700,
-            letterSpacing: '0.8px', textTransform: 'uppercase',
+            fontSize: '10px', fontWeight: 700, letterSpacing: '0.8px',
+            textTransform: 'uppercase',
             background: badge.bg, color: badge.color,
             padding: '3px 10px', borderRadius: '999px',
           }}>
@@ -221,16 +206,13 @@ function VoieCard({
         )}
       </div>
 
-      {/* Title */}
       <h2 style={{
         fontSize: '20px', fontWeight: 700,
-        color: 'var(--app-text)', marginBottom: '10px',
-        letterSpacing: '-0.3px',
+        color: 'var(--app-text)', marginBottom: '10px', letterSpacing: '-0.3px',
       }}>
         {title}
       </h2>
 
-      {/* Description */}
       <p style={{
         fontSize: '14px', color: 'var(--app-text-muted)',
         lineHeight: 1.6, marginBottom: '20px',
@@ -238,14 +220,12 @@ function VoieCard({
         {description}
       </p>
 
-      {/* Tags */}
       {tags && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '20px' }}>
           {tags.map(tag => (
             <span key={tag} style={{
               fontSize: '11px', fontWeight: 500,
-              background: 'var(--app-bg)',
-              border: '1px solid var(--app-border)',
+              background: 'var(--app-bg)', border: '1px solid var(--app-border)',
               color: 'var(--app-text-muted)',
               padding: '3px 10px', borderRadius: '999px',
             }}>
@@ -255,7 +235,6 @@ function VoieCard({
         </div>
       )}
 
-      {/* CTA */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: '6px',
         fontSize: '14px', fontWeight: 600,
@@ -270,12 +249,11 @@ function VoieCard({
 
 /* ── Stat Cell ── */
 function StatCell({
-  value, label, icon, suffix, bordered = false,
+  value, label, icon, bordered = false,
 }: {
   value: number | string
   label: string
   icon: React.ReactNode
-  suffix?: string
   bordered?: boolean
 }) {
   return (
@@ -283,7 +261,10 @@ function StatCell({
       padding: '24px 28px',
       borderLeft: bordered ? '1px solid var(--app-border)' : 'none',
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between',
+        alignItems: 'center', marginBottom: '12px',
+      }}>
         <span style={{ fontSize: '12px', color: 'var(--app-text-muted)', fontWeight: 500 }}>
           {label}
         </span>
@@ -293,8 +274,7 @@ function StatCell({
         fontSize: '36px', fontWeight: 700,
         fontFamily: 'var(--font-geist-mono), monospace',
         color: 'var(--app-text)',
-        letterSpacing: '-1px',
-        lineHeight: 1,
+        letterSpacing: '-1px', lineHeight: 1,
       }}>
         {value}
       </span>
