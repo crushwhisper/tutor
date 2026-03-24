@@ -1,9 +1,10 @@
 import Stripe from 'stripe'
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-02-25.clover',
-  typescript: true,
-})
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY
+  if (!key) throw new Error('STRIPE_SECRET_KEY is not set')
+  return new Stripe(key, { apiVersion: '2026-02-25.clover', typescript: true })
+}
 
 export const STRIPE_PRICES = {
   PRO_MONTHLY: process.env.STRIPE_PRICE_PRO_MONTHLY!,
@@ -23,7 +24,7 @@ export async function createCheckoutSession({
   successUrl: string
   cancelUrl: string
 }) {
-  return stripe.checkout.sessions.create({
+  return getStripe().checkout.sessions.create({
     mode: 'subscription',
     customer_email: email,
     line_items: [{ price: priceId, quantity: 1 }],
@@ -42,7 +43,7 @@ export async function createPortalSession({
   customerId: string
   returnUrl: string
 }) {
-  return stripe.billingPortal.sessions.create({
+  return getStripe().billingPortal.sessions.create({
     customer: customerId,
     return_url: returnUrl,
   })
