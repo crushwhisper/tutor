@@ -319,7 +319,7 @@ export default function Pricing() {
             <div style={{ flex: 1 }} />
             <Link
               href="/auth/signup?plan=pro"
-              className="btn-glow"
+              className="btn-cta"
               style={{
                 fontFamily: 'Outfit, system-ui, sans-serif',
                 fontSize: '14px',

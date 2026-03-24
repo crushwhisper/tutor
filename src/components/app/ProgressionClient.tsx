@@ -4,6 +4,7 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
 } from 'recharts'
+import { Fire } from '@phosphor-icons/react'
 
 export interface ModuleRow {
   id: string
@@ -15,7 +16,6 @@ export interface ModuleRow {
 export interface ProgressRow {
   course_id: string
   completed: boolean
-  // Supabase returns a joined row as a single-element array when using select('courses(module_id)')
   courses: { module_id: string }[] | { module_id: string } | null
 }
 
@@ -47,21 +47,36 @@ const MODULE_SHORT: Record<string, string> = {
 
 function calcStreak(activity: ActivityItem[]): number {
   if (activity.length === 0) return 0
-  const dates = new Set(
-    activity.map((a) => new Date(a.last_accessed_at).toDateString())
-  )
+  const dates = new Set(activity.map((a) => new Date(a.last_accessed_at).toDateString()))
   let streak = 0
   const today = new Date()
   for (let i = 0; i < 14; i++) {
     const d = new Date(today)
     d.setDate(d.getDate() - i)
-    if (dates.has(d.toDateString())) {
-      streak++
-    } else {
-      break
-    }
+    if (dates.has(d.toDateString())) { streak++ } else { break }
   }
   return streak
+}
+
+const statCard = {
+  background: 'var(--app-surface)',
+  border: '1px solid var(--app-border)',
+  borderRadius: '14px',
+  padding: '20px 24px',
+}
+
+const sectionCard = {
+  background: 'var(--app-surface)',
+  border: '1px solid var(--app-border)',
+  borderRadius: '16px',
+  padding: '28px 32px',
+}
+
+const sectionTitle = {
+  fontSize: '14px',
+  fontWeight: 600,
+  color: 'var(--app-text)',
+  marginBottom: '20px',
 }
 
 export default function ProgressionClient({
@@ -73,10 +88,8 @@ export default function ProgressionClient({
 }: Props) {
   const streak = calcStreak(recentActivity)
 
-  // Build module completion data
   const moduleCompletionMap: Record<string, { completed: number }> = {}
   progressByModule.forEach((p) => {
-    // Supabase may return the joined row as an array or a single object depending on the query shape
     const courseJoin = Array.isArray(p.courses) ? p.courses[0] : p.courses
     const moduleId = courseJoin?.module_id
     if (!moduleId) return
@@ -91,7 +104,6 @@ export default function ProgressionClient({
     return { name: MODULE_SHORT[mod.slug] ?? mod.name, pct, completed, total, slug: mod.slug }
   })
 
-  // Radar data from latest mock exam
   const latestExam = mockExams[0]
   const radarData = modules.map((mod) => ({
     module: MODULE_SHORT[mod.slug] ?? mod.name,
@@ -99,13 +111,11 @@ export default function ProgressionClient({
     fullMark: 100,
   }))
 
-  // Score history
   const scoreHistory = [...mockExams].reverse().map((e, i) => ({
-    exam: `Exam ${i + 1}`,
+    exam: `#${i + 1}`,
     score: e.total_score,
   }))
 
-  // Weak points (modules with lowest score in latest exam)
   const weakPoints = latestExam
     ? modules
         .map((mod) => ({
@@ -121,68 +131,95 @@ export default function ProgressionClient({
     ? Math.round(mockExams.reduce((sum, e) => sum + e.total_score, 0) / mockExams.length)
     : null
 
+  const tooltipStyle = {
+    background: 'var(--app-surface)',
+    border: '1px solid var(--app-border)',
+    borderRadius: '8px',
+    fontSize: '13px',
+    color: 'var(--app-text)',
+  }
+
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      {/* Stats row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="glass-card p-5">
-          <div className="text-3xl font-bold text-gold mb-1">{completedCourses}</div>
-          <p className="text-muted text-sm">Cours complétés</p>
-        </div>
-        <div className="glass-card p-5">
-          <div className="text-3xl font-bold text-gold mb-1">{streak}j</div>
-          <p className="text-muted text-sm">Série en cours</p>
-        </div>
-        <div className="glass-card p-5">
-          <div className="text-3xl font-bold text-gold mb-1">{mockExams.length}</div>
-          <p className="text-muted text-sm">Examens blancs</p>
-        </div>
-        <div className="glass-card p-5">
-          <div className="text-3xl font-bold text-gold mb-1">{avgScore !== null ? `${avgScore}%` : '—'}</div>
-          <p className="text-muted text-sm">Score moyen</p>
-        </div>
+    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+      {/* Header */}
+      <div style={{ marginBottom: '28px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--app-text)', marginBottom: '4px' }}>
+          Ma Progression
+        </h1>
+        <p style={{ fontSize: '15px', color: 'var(--app-text-muted)' }}>
+          Vue d&apos;ensemble de votre avancement.
+        </p>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Radar chart */}
-        <div className="glass-card p-6">
-          <h2 className="text-white font-semibold mb-4">
-            {latestExam ? 'Dernier examen — par module' : 'Performances par module'}
-          </h2>
+      {/* Stats row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>
+        {[
+          { value: completedCourses, label: 'Cours complétés', color: 'var(--accent)' },
+          {
+            value: <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {streak}j <Fire size={20} weight="fill" style={{ color: 'var(--warning)' }} />
+            </span>,
+            label: 'Série en cours',
+            color: 'var(--warning)',
+          },
+          { value: mockExams.length, label: 'Examens blancs', color: 'var(--accent)' },
+          { value: avgScore !== null ? `${avgScore}%` : '—', label: 'Score moyen', color: avgScore !== null && avgScore >= 70 ? 'var(--success)' : 'var(--accent)' },
+        ].map((stat, i) => (
+          <div key={i} style={statCard}>
+            <div style={{
+              fontSize: '28px', fontWeight: 700,
+              color: typeof stat.color === 'string' ? stat.color : 'var(--accent)',
+              fontFamily: 'var(--font-geist-mono), monospace',
+              marginBottom: '4px',
+            }}>
+              {stat.value}
+            </div>
+            <p style={{ fontSize: '13px', color: 'var(--app-text-muted)' }}>{stat.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Charts row */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+        {/* Radar */}
+        <div style={sectionCard}>
+          <p style={sectionTitle}>{latestExam ? 'Dernier examen — par module' : 'Performance par module'}</p>
           {latestExam ? (
             <ResponsiveContainer width="100%" height={260}>
               <RadarChart data={radarData}>
-                <PolarGrid stroke="rgba(232,168,62,0.15)" />
-                <PolarAngleAxis dataKey="module" tick={{ fill: '#8892a4', fontSize: 11 }} />
-                <Radar dataKey="score" stroke="#e8a83e" fill="#e8a83e" fillOpacity={0.2} />
+                <PolarGrid stroke="rgba(232,232,232,0.9)" />
+                <PolarAngleAxis dataKey="module" tick={{ fill: '#888888', fontSize: 11 }} />
+                <Radar dataKey="score" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.15} strokeWidth={2} />
               </RadarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-48 text-muted text-sm">
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              height: '200px', color: 'var(--app-text-muted)', fontSize: '14px',
+            }}>
               Passez un examen blanc pour voir votre radar.
             </div>
           )}
         </div>
 
-        {/* Score history bar chart */}
-        <div className="glass-card p-6">
-          <h2 className="text-white font-semibold mb-4">Historique des scores</h2>
+        {/* Score history */}
+        <div style={sectionCard}>
+          <p style={sectionTitle}>Historique des scores</p>
           {scoreHistory.length > 0 ? (
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={scoreHistory}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="exam" tick={{ fill: '#8892a4', fontSize: 11 }} />
-                <YAxis domain={[0, 100]} tick={{ fill: '#8892a4', fontSize: 11 }} />
-                <Tooltip
-                  contentStyle={{ background: '#1a2540', border: '1px solid rgba(232,168,62,0.2)', borderRadius: 8 }}
-                  labelStyle={{ color: '#e8eaf0' }}
-                  itemStyle={{ color: '#e8a83e' }}
-                />
-                <Bar dataKey="score" fill="#e8a83e" radius={[4, 4, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(232,232,232,0.9)" />
+                <XAxis dataKey="exam" tick={{ fill: '#888888', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis domain={[0, 100]} tick={{ fill: '#888888', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
+                <Bar dataKey="score" fill="#3B82F6" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-48 text-muted text-sm">
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              height: '200px', color: 'var(--app-text-muted)', fontSize: '14px',
+            }}>
               Aucun examen blanc encore.
             </div>
           )}
@@ -190,20 +227,29 @@ export default function ProgressionClient({
       </div>
 
       {/* Module progress */}
-      <div className="glass-card p-6">
-        <h2 className="text-white font-semibold mb-4">Progression par module</h2>
-        <div className="space-y-4">
+      <div style={{ ...sectionCard, marginBottom: '16px' }}>
+        <p style={sectionTitle}>Progression par module</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {moduleProgressData.map((mod) => (
             <div key={mod.slug}>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-muted">{mod.name}</span>
-                <span className="text-white">{mod.completed} / {mod.total} cours</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span style={{ fontSize: '14px', color: 'var(--app-text-muted)' }}>{mod.name}</span>
+                <span style={{
+                  fontSize: '13px', fontFamily: 'var(--font-geist-mono), monospace',
+                  color: 'var(--app-text)',
+                }}>
+                  {mod.completed} / {mod.total}
+                </span>
               </div>
-              <div className="w-full bg-navy-800 rounded-full h-2">
-                <div
-                  className="h-2 rounded-full bg-gold transition-all"
-                  style={{ width: `${mod.pct}%` }}
-                />
+              <div style={{
+                width: '100%', height: '6px',
+                background: 'var(--app-border)', borderRadius: '999px', overflow: 'hidden',
+              }}>
+                <div style={{
+                  height: '100%', width: `${mod.pct}%`,
+                  background: mod.pct >= 70 ? 'var(--success)' : 'var(--accent)',
+                  borderRadius: '999px', transition: 'width 600ms ease',
+                }} />
               </div>
             </div>
           ))}
@@ -212,13 +258,22 @@ export default function ProgressionClient({
 
       {/* Weak points */}
       {weakPoints.length > 0 && (
-        <div className="glass-card p-6">
-          <h2 className="text-white font-semibold mb-4">Points à améliorer</h2>
-          <div className="grid md:grid-cols-3 gap-4">
+        <div style={sectionCard}>
+          <p style={sectionTitle}>Points à améliorer</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
             {weakPoints.map((wp) => (
-              <div key={wp.slug} className="glass-card p-4 border-red-500/20">
-                <div className="text-2xl font-bold text-red-400 mb-1">{wp.score}%</div>
-                <div className="text-muted text-sm">{wp.name}</div>
+              <div key={wp.slug} style={{
+                background: 'rgba(239,68,68,0.06)',
+                border: '1px solid rgba(239,68,68,0.2)',
+                borderRadius: '12px', padding: '16px 20px',
+              }}>
+                <div style={{
+                  fontSize: '24px', fontWeight: 700, color: '#EF4444',
+                  fontFamily: 'var(--font-geist-mono), monospace', marginBottom: '4px',
+                }}>
+                  {wp.score}%
+                </div>
+                <div style={{ fontSize: '13px', color: 'var(--app-text-muted)' }}>{wp.name}</div>
               </div>
             ))}
           </div>

@@ -12,6 +12,7 @@ import {
   ChartBar,
   Gear,
   Lock,
+  FilePdf,
 } from '@phosphor-icons/react'
 
 interface NavItem {
@@ -25,16 +26,17 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { href: '/app', label: 'Cockpit', Icon: House },
   { href: '/app/preparation', label: 'Préparation', Icon: Books },
-  { href: '/app/programmes/90', label: 'Programme 3 Mois', sublabel: 'Intensif', Icon: Lightning, proOnly: true },
-  { href: '/app/programmes/180', label: 'Programme 6 Mois', sublabel: 'Recommandé', Icon: CalendarDots, proOnly: true },
+  { href: '/app/programmes/90j', label: 'Programme 3 Mois', sublabel: 'Intensif', Icon: Lightning, proOnly: true },
+  { href: '/app/programmes/180j', label: 'Programme 6 Mois', sublabel: 'Recommandé', Icon: CalendarDots, proOnly: true },
   { href: '/app/examen-blanc', label: 'Examens Blancs', Icon: ClipboardText, proOnly: true },
   { href: '/app/progression', label: 'Progression', Icon: ChartBar, proOnly: true },
+  { href: '/app/mes-cours', label: 'Mes Cours', sublabel: 'PDF personnels', Icon: FilePdf },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
   const { user } = useAppStore()
-  const isPro = user?.subscription_plan === 'pro' && user?.subscription_status === 'active'
+  const isPro = user?.role === 'admin' || (user?.subscription_plan === 'pro' && user?.subscription_status === 'active')
 
   function isActive(href: string) {
     if (href === '/app') return pathname === '/app'

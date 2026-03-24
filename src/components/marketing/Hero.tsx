@@ -322,7 +322,7 @@ export default function Hero() {
               <motion.div whileHover={{ y: -2 }}>
                 <Link
                   href="/auth/signup"
-                  className="btn-glow"
+                  className="btn-cta"
                   style={{
                     fontFamily: 'Outfit, system-ui, sans-serif',
                     fontSize: '15px',

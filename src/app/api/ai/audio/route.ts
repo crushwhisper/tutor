@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { generateSpeech } from '@/lib/openai'
 import { NextResponse } from 'next/server'
+import { checkIsPro } from '@/lib/isPro'
 
 export async function POST(request: Request) {
   const supabase = await createClient()
@@ -10,11 +11,11 @@ export async function POST(request: Request) {
   // Audio is Pro only
   const { data: profile } = await supabase
     .from('users')
-    .select('subscription_plan, subscription_status')
+    .select('role, subscription_plan, subscription_status')
     .eq('id', user.id)
     .single()
 
-  const isPro = profile?.subscription_plan === 'pro' && profile?.subscription_status === 'active'
+  const isPro = checkIsPro(profile)
   if (!isPro) return NextResponse.json({ error: 'Pro required' }, { status: 403 })
 
   const { text } = await request.json()

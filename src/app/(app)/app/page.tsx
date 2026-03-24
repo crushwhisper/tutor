@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import DashboardClient from '@/components/app/DashboardClient'
+import { checkIsPro } from '@/lib/isPro'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -9,7 +10,7 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from('users')
-    .select('full_name, subscription_plan, subscription_status')
+    .select('full_name, role, subscription_plan, subscription_status')
     .eq('id', user.id)
     .single()
 
@@ -19,9 +20,7 @@ export default async function DashboardPage() {
     .eq('user_id', user.id)
     .eq('completed', true)
 
-  const isPro =
-    profile?.subscription_plan === 'pro' &&
-    profile?.subscription_status === 'active'
+  const isPro = checkIsPro(profile)
 
   return (
     <DashboardClient

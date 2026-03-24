@@ -279,7 +279,7 @@ export default function HowItWorks() {
             </div>
             <Link
               href="/auth/signup"
-              className="btn-glow"
+              className="btn-cta"
               style={{
                 fontFamily: 'Outfit, system-ui, sans-serif',
                 fontSize: '14px',

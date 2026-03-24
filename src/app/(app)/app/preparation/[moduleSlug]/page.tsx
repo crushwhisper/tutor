@@ -1,23 +1,23 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
+import { Dna, Heartbeat, Scissors, Siren, Lightning, ArrowLeft } from '@phosphor-icons/react/dist/ssr'
 import type { Course, UserProgress } from '@/types/database'
+import { checkIsPro } from '@/lib/isPro'
+import { supabaseAdmin } from '@/lib/supabase/admin'
+import CourseRow from '@/components/app/CourseRow'
 
-const DIFFICULTY_LABELS: Record<string, string> = {
-  facile: 'Facile',
-  moyen: 'Moyen',
-  difficile: 'Difficile',
-}
-
-const DIFFICULTY_COLORS: Record<string, string> = {
-  facile: 'text-green-400 bg-green-400/10',
-  moyen: 'text-yellow-400 bg-yellow-400/10',
-  difficile: 'text-red-400 bg-red-400/10',
+const MODULE_META: Record<string, { Icon: React.ElementType; color: string }> = {
+  'anatomie-biologie': { Icon: Dna, color: '#4A90D9' },
+  'medecine': { Icon: Heartbeat, color: '#E8A83E' },
+  'chirurgie': { Icon: Scissors, color: '#E85555' },
+  'urgences-medicales': { Icon: Siren, color: '#9B59B6' },
+  'urgences-chirurgicales': { Icon: Lightning, color: '#E67E22' },
 }
 
 interface Props {
   params: Promise<{ moduleSlug: string }>
-  searchParams: Promise<{ difficulty?: string; search?: string }>
+  searchParams: Promise<{ difficulty?: string }>
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -27,33 +27,23 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function ModuleCoursesPage({ params, searchParams }: Props) {
   const { moduleSlug } = await params
-  const { difficulty, search } = await searchParams
+  const { difficulty } = await searchParams
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Fetch module
-  const { data: module } = await supabase
-    .from('modules')
-    .select('*')
-    .eq('slug', moduleSlug)
-    .eq('is_active', true)
-    .single()
+  // Use admin client to bypass RLS
+  const [{ data: module }, { data: userProfile }] = await Promise.all([
+    supabaseAdmin.from('modules').select('*').eq('slug', moduleSlug).eq('is_active', true).single(),
+    supabaseAdmin.from('users').select('role,subscription_plan,subscription_status').eq('id', user.id).single(),
+  ])
 
   if (!module) notFound()
 
-  // Fetch user profile
-  const { data: userProfile } = await supabase
-    .from('users')
-    .select('subscription_plan, subscription_status')
-    .eq('id', user.id)
-    .single()
+  const isPro = checkIsPro(userProfile)
 
-  const isPro = userProfile?.subscription_plan === 'pro' && userProfile?.subscription_status === 'active'
-
-  // Build course query
-  let query = supabase
+  let query = supabaseAdmin
     .from('courses')
     .select('*')
     .eq('module_id', module.id)
@@ -61,14 +51,31 @@ export default async function ModuleCoursesPage({ params, searchParams }: Props)
     .order('order_index')
 
   if (difficulty) query = query.eq('difficulty', difficulty)
-  if (search) query = query.ilike('title', `%${search}%`)
 
   const { data: courses } = await query
+  const list = (courses ?? []) as Course[]
 
-  // Fetch user progress for these courses
-  const courseIds = ((courses ?? []) as Course[]).map((c) => c.id)
+  // Filter out subsection headers mistakenly extracted as courses
+  const validCourses = list.filter((c) => {
+    const t = c.title.trim()
+    if (t.length <= 5) return false
+    if (t.startsWith('CONTENU')) return false
+    // Section numbers like "1 – Plan superficiel" or "3 – Lymphatiques"
+    if (/^\d+\s*[–\-.]\s/.test(t)) return false
+    // Lettered subsections: "A – ", "B- ", "I. ", "II."
+    if (/^[A-Z]{1,3}[\s–\-\.]\s/.test(t)) return false
+    // Titles ending with " :" are section headers ("RAPPORTS :", "VASCULARISATION :")
+    if (t.endsWith(' :') || t.endsWith(':')) return false
+    // Roman numerals subsections "I.", "II.", "III."
+    if (/^[IVX]+\.\s/.test(t)) return false
+    // Very short content = subsection without real body
+    if ((c.content?.length ?? 0) < 300) return false
+    return true
+  })
+
+  const courseIds = validCourses.map((c) => c.id)
   const { data: progress } = courseIds.length > 0
-    ? await supabase
+    ? await supabaseAdmin
         .from('user_progress')
         .select('course_id, completed, score')
         .eq('user_id', user.id)
@@ -76,109 +83,111 @@ export default async function ModuleCoursesPage({ params, searchParams }: Props)
     : { data: [] as Pick<UserProgress, 'course_id' | 'completed' | 'score'>[] }
 
   const progressMap = Object.fromEntries(
-    ((progress ?? []) as Pick<UserProgress, 'course_id' | 'completed' | 'score'>[]).map((p) => [p.course_id, p])
+    ((progress ?? []) as Pick<UserProgress, 'course_id' | 'completed' | 'score'>[])
+      .map((p) => [p.course_id, p])
   )
 
+  const meta = MODULE_META[moduleSlug]
+  const ModuleIcon = meta?.Icon
+  const accentColor = meta?.color ?? 'var(--accent)'
+  const completedCount = validCourses.filter((c) => progressMap[c.id]?.completed).length
+
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href="/app/preparation" className="text-muted hover:text-gold transition-colors text-sm">
-          ← Modules
-        </Link>
-        <span className="text-muted">/</span>
-        <h1 className="text-xl font-semibold text-white">{module.name}</h1>
-      </div>
+    <div style={{ maxWidth: '800px', margin: '0 auto' }}>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3">
+      {/* Breadcrumb */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '28px' }}>
         <Link
-          href={`/app/preparation/${moduleSlug}`}
-          className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
-            !difficulty ? 'border-gold/50 bg-gold/10 text-gold' : 'border-white/10 text-muted hover:border-white/20'
-          }`}
+          href="/app/preparation"
+          style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--app-text-muted)', textDecoration: 'none' }}
         >
-          Tous
+          <ArrowLeft size={14} />
+          Préparation Libre
         </Link>
-        {(['facile', 'moyen', 'difficile'] as const).map((d) => (
-          <Link
-            key={d}
-            href={`/app/preparation/${moduleSlug}?difficulty=${d}`}
-            className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
-              difficulty === d ? 'border-gold/50 bg-gold/10 text-gold' : 'border-white/10 text-muted hover:border-white/20'
-            }`}
-          >
-            {DIFFICULTY_LABELS[d]}
-          </Link>
-        ))}
+        <span style={{ color: 'var(--app-border)', fontSize: '13px' }}>/</span>
+        <span style={{ fontSize: '13px', color: 'var(--app-text)', fontWeight: 500 }}>{module.name}</span>
       </div>
 
-      {/* Course count */}
-      <p className="text-muted text-sm">{(courses ?? []).length} cours</p>
-
-      {/* Course list */}
-      <div className="space-y-3">
-        {((courses ?? []) as Course[]).map((course) => {
-          const prog = progressMap[course.id]
-          const isLocked = course.is_premium && !isPro
-
-          return (
-            <div
-              key={course.id}
-              className={`glass-card p-5 ${isLocked ? 'opacity-60' : 'hover:border-gold/30 transition-all'}`}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <h3 className="text-white font-medium text-sm">{course.title}</h3>
-                    {course.is_premium && (
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-gold/20 text-gold">Pro</span>
-                    )}
-                    {prog?.completed && (
-                      <span className="text-xs text-green-400">✓ Complété</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-3 text-xs text-muted">
-                    <span className={`px-2 py-0.5 rounded-full ${DIFFICULTY_COLORS[course.difficulty]}`}>
-                      {DIFFICULTY_LABELS[course.difficulty]}
-                    </span>
-                    <span>{course.duration_minutes} min</span>
-                    {prog?.score != null && (
-                      <span>Score : {prog.score}%</span>
-                    )}
-                  </div>
-                  {course.summary && (
-                    <p className="text-muted text-xs mt-2 line-clamp-1">{course.summary}</p>
-                  )}
-                </div>
-
-                {isLocked ? (
-                  <Link
-                    href="/app/settings?tab=subscription"
-                    className="btn-secondary text-xs py-1.5 px-4 shrink-0"
-                  >
-                    🔒 Pro
-                  </Link>
-                ) : (
-                  <Link
-                    href={`/app/preparation/${moduleSlug}/${course.slug}`}
-                    className="btn-primary text-xs py-1.5 px-4 shrink-0"
-                  >
-                    {prog?.completed ? 'Revoir' : 'Étudier'}
-                  </Link>
-                )}
-              </div>
+      {/* Module header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          {ModuleIcon && (
+            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: accentColor + '14', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <ModuleIcon size={22} weight="duotone" style={{ color: accentColor }} />
             </div>
-          )
-        })}
+          )}
+          <div>
+            <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--app-text)', letterSpacing: '-0.3px', marginBottom: '2px' }}>{module.name}</h1>
+            <p style={{ fontSize: '13px', color: 'var(--app-text-muted)' }}>{completedCount}/{validCourses.length} cours complétés</p>
+          </div>
+        </div>
 
-        {(courses ?? []).length === 0 && (
-          <div className="text-center py-12 text-muted">
-            <p className="text-4xl mb-3">📭</p>
-            <p>Aucun cours disponible pour ces critères.</p>
+        {validCourses.length > 0 && (
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ width: '120px', height: '4px', background: 'var(--app-border)', borderRadius: '999px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${Math.round((completedCount / validCourses.length) * 100)}%`, background: accentColor, borderRadius: '999px' }} />
+            </div>
+            <span style={{ fontSize: '11px', color: 'var(--app-text-ghost)', marginTop: '4px', display: 'block' }}>
+              {Math.round((completedCount / validCourses.length) * 100)}%
+            </span>
           </div>
         )}
       </div>
+
+      {/* Difficulty filters */}
+      <div style={{ display: 'flex', gap: '6px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        {[
+          { value: undefined, label: 'Tous' },
+          { value: 'facile', label: 'Facile' },
+          { value: 'moyen', label: 'Moyen' },
+          { value: 'difficile', label: 'Difficile' },
+        ].map(({ value, label }) => {
+          const active = difficulty === value || (!difficulty && !value)
+          return (
+            <Link
+              key={label}
+              href={value ? `/app/preparation/${moduleSlug}?difficulty=${value}` : `/app/preparation/${moduleSlug}`}
+              style={{
+                fontSize: '12px', fontWeight: 500, padding: '5px 14px', borderRadius: '999px', textDecoration: 'none',
+                border: `1px solid ${active ? accentColor + '60' : 'var(--app-border)'}`,
+                background: active ? accentColor + '12' : 'transparent',
+                color: active ? accentColor : 'var(--app-text-muted)',
+              }}
+            >
+              {label}
+            </Link>
+          )
+        })}
+        <span style={{ marginLeft: 'auto', fontSize: '12px', color: 'var(--app-text-ghost)', display: 'flex', alignItems: 'center' }}>
+          {validCourses.length} cours
+        </span>
+      </div>
+
+      {/* Course list */}
+      {validCourses.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '64px 40px', color: 'var(--app-text-muted)', fontSize: '14px' }}>
+          Aucun cours disponible pour ces critères.
+        </div>
+      ) : (
+        <div style={{ border: '1px solid var(--app-border)', borderRadius: '14px', overflow: 'hidden', background: 'var(--app-surface)' }}>
+          {validCourses.map((course, index) => {
+            const prog = progressMap[course.id]
+            return (
+              <CourseRow
+                key={course.id}
+                course={course}
+                index={index}
+                total={validCourses.length}
+                isLocked={course.is_premium && !isPro}
+                isCompleted={prog?.completed === true}
+                score={prog?.score ?? null}
+                moduleSlug={moduleSlug}
+                accentColor={accentColor}
+              />
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

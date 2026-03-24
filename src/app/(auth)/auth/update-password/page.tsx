@@ -4,12 +4,22 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
+const inputStyle: React.CSSProperties = {
+  width: '100%', boxSizing: 'border-box',
+  background: '#FFFFFF', border: '1px solid #E4E4E7',
+  borderRadius: '12px', padding: '12px 16px',
+  fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '14px',
+  color: '#09090B', outline: 'none', transition: 'border-color 200ms',
+}
+
 export default function UpdatePasswordPage() {
   const router = useRouter()
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [pw1Focused, setPw1Focused] = useState(false)
+  const [pw2Focused, setPw2Focused] = useState(false)
 
   async function handleUpdate(e: React.FormEvent) {
     e.preventDefault()
@@ -32,45 +42,60 @@ export default function UpdatePasswordPage() {
   }
 
   return (
-    <div className="glass-card p-8">
-      <h1 className="text-2xl font-semibold text-white mb-2">Nouveau mot de passe</h1>
-      <p className="text-muted text-sm mb-8">Choisissez un mot de passe sécurisé.</p>
+    <div>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '28px', fontWeight: 700, color: '#09090B', letterSpacing: '-0.02em', marginBottom: '8px' }}>
+          Nouveau mot de passe
+        </h1>
+        <p style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '14px', color: '#71717A' }}>
+          Choisissez un mot de passe sécurisé.
+        </p>
+      </div>
 
       {error && (
-        <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+        <div style={{ marginBottom: '24px', padding: '12px 16px', borderRadius: '12px', background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)', fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '13px', color: '#DC2626' }}>
           {error}
         </div>
       )}
 
-      <form onSubmit={handleUpdate} className="space-y-4">
+      <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div>
-          <label className="block text-sm text-muted mb-2">Nouveau mot de passe</label>
+          <label style={{ display: 'block', fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '13px', fontWeight: 500, color: '#3F3F46', marginBottom: '8px' }}>
+            Nouveau mot de passe
+          </label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onFocus={() => setPw1Focused(true)}
+            onBlur={() => setPw1Focused(false)}
             placeholder="8 caractères minimum"
             minLength={8}
             required
-            className="input-field"
+            style={{ ...inputStyle, borderColor: pw1Focused ? '#6366F1' : '#E4E4E7', boxShadow: pw1Focused ? '0 0 0 3px rgba(99,102,241,0.08)' : 'none' }}
           />
         </div>
         <div>
-          <label className="block text-sm text-muted mb-2">Confirmer le mot de passe</label>
+          <label style={{ display: 'block', fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '13px', fontWeight: 500, color: '#3F3F46', marginBottom: '8px' }}>
+            Confirmer le mot de passe
+          </label>
           <input
             type="password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
+            onFocus={() => setPw2Focused(true)}
+            onBlur={() => setPw2Focused(false)}
             placeholder="Répétez le mot de passe"
             minLength={8}
             required
-            className="input-field"
+            style={{ ...inputStyle, borderColor: pw2Focused ? '#6366F1' : '#E4E4E7', boxShadow: pw2Focused ? '0 0 0 3px rgba(99,102,241,0.08)' : 'none' }}
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="btn-primary w-full disabled:opacity-50"
+          className="btn-cta"
+          style={{ width: '100%', padding: '14px', borderRadius: '12px', fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '15px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, transition: 'opacity 200ms' }}
         >
           {loading ? 'Mise à jour...' : 'Mettre à jour'}
         </button>

@@ -40,7 +40,7 @@ export default function Topbar() {
     ? user.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
     : 'T'
 
-  const isPro = user?.subscription_plan === 'pro' && user?.subscription_status === 'active'
+  const isPro = user?.role === 'admin' || (user?.subscription_plan === 'pro' && user?.subscription_status === 'active')
 
   // Close dropdown on outside click
   useEffect(() => {

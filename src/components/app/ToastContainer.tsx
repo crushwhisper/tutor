@@ -4,10 +4,10 @@ import { useAppStore } from '@/store/app'
 import type { ToastMessage } from '@/types'
 
 const TOAST_STYLES: Record<ToastMessage['type'], string> = {
-  success: 'border-green-500/30 bg-green-500/10 text-green-400',
-  error: 'border-red-500/30 bg-red-500/10 text-red-400',
-  info: 'border-gold/30 bg-gold/10 text-gold',
-  warning: 'border-yellow-500/30 bg-yellow-500/10 text-yellow-400',
+  success: 'border-green-500/30 bg-green-500/10 text-green-700',
+  error: 'border-red-500/30 bg-red-500/10 text-red-700',
+  info: 'border-blue-500/30 bg-blue-500/10 text-blue-700',
+  warning: 'border-yellow-500/30 bg-yellow-500/10 text-yellow-700',
 }
 
 const TOAST_ICONS: Record<ToastMessage['type'], string> = {
@@ -27,7 +27,7 @@ export default function ToastContainer() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl border backdrop-blur-sm animate-fade-in-up max-w-sm shadow-navy-md ${TOAST_STYLES[toast.type]}`}
+          className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl border backdrop-blur-sm animate-fade-in-up max-w-sm shadow-md ${TOAST_STYLES[toast.type]}`}
         >
           <span className="text-sm font-bold shrink-0 mt-0.5">{TOAST_ICONS[toast.type]}</span>
           <div className="flex-1 min-w-0">

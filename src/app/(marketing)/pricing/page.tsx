@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import Navbar from '@/components/marketing/Navbar'
 import Pricing from '@/components/marketing/Pricing'
 import Footer from '@/components/marketing/Footer'
@@ -8,7 +7,7 @@ export const metadata: Metadata = { title: 'Tarifs — TUTOR' }
 
 export default function PricingPage() {
   return (
-    <main className="min-h-screen bg-navy">
+    <main className="marketing-wrapper min-h-screen">
       <Navbar />
       <div className="pt-24">
         <Pricing />
@@ -16,8 +15,10 @@ export default function PricingPage() {
 
       {/* FAQ */}
       <section className="py-16 px-6 max-w-3xl mx-auto">
-        <h2 className="text-2xl font-semibold text-white mb-8 text-center">Questions fréquentes</h2>
-        <div className="space-y-4">
+        <h2 style={{ fontSize: '22px', fontWeight: 600, color: 'var(--avalon-brown)', marginBottom: '32px', textAlign: 'center' }}>
+          Questions fréquentes
+        </h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {[
             {
               q: 'Puis-je annuler à tout moment ?',
@@ -36,9 +37,14 @@ export default function PricingPage() {
               a: 'Oui. Toutes les données sont chiffrées et stockées de manière sécurisée. Les paiements sont traités par Stripe, leader mondial de la sécurité des paiements.',
             },
           ].map(({ q, a }) => (
-            <div key={q} className="glass-card p-6">
-              <h3 className="text-white font-semibold mb-2">{q}</h3>
-              <p className="text-muted text-sm leading-relaxed">{a}</p>
+            <div key={q} style={{
+              background: 'white',
+              border: '1px solid var(--avalon-border)',
+              borderRadius: '14px',
+              padding: '24px',
+            }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--avalon-brown)', marginBottom: '8px' }}>{q}</h3>
+              <p style={{ fontSize: '13px', color: 'var(--avalon-brown-muted)', lineHeight: 1.7 }}>{a}</p>
             </div>
           ))}
         </div>

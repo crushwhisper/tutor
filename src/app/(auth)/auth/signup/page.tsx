@@ -303,7 +303,7 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={loading}
-          className="btn-glow"
+          className="btn-cta"
           style={{
             width: '100%',
             padding: '14px',

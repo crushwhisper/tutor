@@ -10,7 +10,7 @@ interface Props {
 export default function SubscriptionCard({ user }: Props) {
   const [loading, setLoading] = useState<string | null>(null)
 
-  const isPro = user.subscription_plan === 'pro' && user.subscription_status === 'active'
+  const isPro = user.role === 'admin' || (user.subscription_plan === 'pro' && user.subscription_status === 'active')
 
   async function handleCheckout(plan: 'monthly' | '6months') {
     setLoading(plan)
@@ -42,23 +42,38 @@ export default function SubscriptionCard({ user }: Props) {
 
   if (isPro) {
     return (
-      <div className="glass-card p-6 border-gold/30">
-        <div className="flex items-start justify-between mb-4">
+      <div style={{
+        background: 'var(--app-surface)',
+        border: '1px solid var(--success)',
+        borderRadius: '14px',
+        padding: '24px',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
           <div>
-            <h3 className="text-white font-semibold">Abonnement Pro</h3>
-            <p className="text-muted text-sm mt-1">
+            <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--app-text)', marginBottom: '4px' }}>Abonnement Pro</h3>
+            <p style={{ fontSize: '13px', color: 'var(--app-text-muted)' }}>
               Actif jusqu&apos;au{' '}
               {user.subscription_ends_at
                 ? new Date(user.subscription_ends_at).toLocaleDateString('fr-FR')
                 : '—'}
             </p>
           </div>
-          <span className="text-xs px-3 py-1 rounded-full bg-gold/20 text-gold border border-gold/30">Pro actif</span>
+          <span style={{
+            fontSize: '11px', fontWeight: 600, padding: '4px 12px', borderRadius: '999px',
+            background: 'var(--success-soft)', color: 'var(--success)', border: '1px solid var(--success)',
+          }}>
+            Pro actif
+          </span>
         </div>
         <button
           onClick={handlePortal}
           disabled={loading === 'portal'}
-          className="btn-secondary text-sm disabled:opacity-50"
+          style={{
+            padding: '10px 20px', borderRadius: '10px', fontSize: '13px', fontWeight: 500,
+            background: 'transparent', border: '1px solid var(--app-border)',
+            color: 'var(--app-text-muted)', cursor: 'pointer', transition: 'all 150ms',
+            opacity: loading === 'portal' ? 0.6 : 1,
+          }}
         >
           {loading === 'portal' ? 'Chargement...' : 'Gérer mon abonnement'}
         </button>
@@ -67,32 +82,71 @@ export default function SubscriptionCard({ user }: Props) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="glass-card p-6">
-        <h3 className="text-white font-semibold mb-1">Plan Starter</h3>
-        <p className="text-muted text-sm mb-6">Passez à Pro pour débloquer toutes les fonctionnalités.</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={{
+        background: 'var(--app-surface)',
+        border: '1px solid var(--app-border)',
+        borderRadius: '14px',
+        padding: '24px',
+      }}>
+        <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--app-text)', marginBottom: '4px' }}>Plan Starter</h3>
+        <p style={{ fontSize: '13px', color: 'var(--app-text-muted)', marginBottom: '24px' }}>
+          Passez à Pro pour débloquer toutes les fonctionnalités.
+        </p>
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="glass-card p-5 border-white/10">
-            <div className="text-2xl font-bold text-white mb-1">99 <span className="text-sm font-normal text-muted">DH</span></div>
-            <div className="text-muted text-sm mb-4">/ mois</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div style={{
+            background: 'var(--app-bg)',
+            border: '1px solid var(--app-border)',
+            borderRadius: '12px',
+            padding: '20px',
+          }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: 'var(--app-text)', marginBottom: '4px' }}>
+              99 <span style={{ fontSize: '13px', fontWeight: 400, color: 'var(--app-text-muted)' }}>DH</span>
+            </div>
+            <div style={{ fontSize: '13px', color: 'var(--app-text-muted)', marginBottom: '16px' }}>/ mois</div>
             <button
               onClick={() => handleCheckout('monthly')}
               disabled={!!loading}
-              className="btn-primary w-full text-sm disabled:opacity-50"
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: 'none',
+                background: '#6366F1', color: 'white', fontSize: '13px', fontWeight: 600,
+                cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1,
+                transition: 'opacity 150ms',
+              }}
             >
               {loading === 'monthly' ? 'Chargement...' : 'Choisir mensuel'}
             </button>
           </div>
 
-          <div className="glass-card p-5 border-gold/30 relative overflow-hidden">
-            <div className="absolute top-2 right-2 text-xs px-2 py-0.5 rounded-full bg-gold text-navy font-semibold">-20%</div>
-            <div className="text-2xl font-bold text-gold mb-1">79 <span className="text-sm font-normal text-muted">DH</span></div>
-            <div className="text-muted text-sm mb-4">/ mois × 6</div>
+          <div style={{
+            background: 'var(--app-bg)',
+            border: '1px solid var(--accent)',
+            borderRadius: '12px',
+            padding: '20px',
+            position: 'relative',
+            overflow: 'hidden',
+          }}>
+            <div style={{
+              position: 'absolute', top: '10px', right: '10px',
+              fontSize: '10px', fontWeight: 600, padding: '2px 8px',
+              borderRadius: '999px', background: 'var(--accent)', color: 'white',
+            }}>
+              -20%
+            </div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: 'var(--accent)', marginBottom: '4px' }}>
+              79 <span style={{ fontSize: '13px', fontWeight: 400, color: 'var(--app-text-muted)' }}>DH</span>
+            </div>
+            <div style={{ fontSize: '13px', color: 'var(--app-text-muted)', marginBottom: '16px' }}>/ mois × 6</div>
             <button
               onClick={() => handleCheckout('6months')}
               disabled={!!loading}
-              className="btn-primary w-full text-sm disabled:opacity-50"
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: 'none',
+                background: '#6366F1', color: 'white', fontSize: '13px', fontWeight: 600,
+                cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1,
+                transition: 'opacity 150ms',
+              }}
             >
               {loading === '6months' ? 'Chargement...' : 'Choisir 6 mois'}
             </button>

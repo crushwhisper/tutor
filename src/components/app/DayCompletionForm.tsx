@@ -62,36 +62,50 @@ export default function DayCompletionForm({
   }
 
   return (
-    <div className="glass-card p-6 border-gold/20">
-      <h2 className="text-white font-semibold mb-4">
+    <div style={{
+      background: 'var(--app-surface)',
+      border: '1px solid var(--app-border)',
+      borderRadius: '14px',
+      padding: '24px',
+    }}>
+      <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--app-text)', marginBottom: '16px' }}>
         {isCompleted ? 'Jour validé' : 'Valider le jour'}
       </h2>
 
-      <div className="mb-4">
-        <label className="block text-sm text-muted mb-2">Notes (facultatif)</label>
+      <div style={{ marginBottom: '16px' }}>
+        <label style={{ display: 'block', fontSize: '12px', color: 'var(--app-text-muted)', marginBottom: '8px' }}>
+          Notes (facultatif)
+        </label>
         <textarea
           value={notes ?? ''}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Vos notes de révision..."
           rows={3}
-          className="w-full bg-navy-800 border border-gold/20 rounded-xl px-4 py-3 text-sm text-white placeholder-muted focus:outline-none focus:border-gold/40 resize-none"
+          style={{
+            width: '100%', boxSizing: 'border-box', resize: 'vertical',
+            background: 'var(--app-bg)', border: '1px solid var(--app-border)',
+            borderRadius: '10px', padding: '12px 14px',
+            fontSize: '13px', color: 'var(--app-text)', outline: 'none',
+            fontFamily: 'inherit', transition: 'border-color 150ms',
+          }}
+          onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--accent)' }}
+          onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--app-border)' }}
         />
       </div>
 
       <button
         onClick={markComplete}
         disabled={saving || !!isCompleted}
-        className={`w-full py-3 rounded-xl font-semibold text-sm transition-all ${
-          isCompleted
-            ? 'bg-green-500/20 text-green-400 border border-green-500/30 cursor-default'
-            : 'btn-primary'
-        }`}
+        style={{
+          width: '100%', padding: '12px', borderRadius: '10px', border: 'none',
+          background: isCompleted ? 'var(--success-soft)' : 'var(--success)',
+          color: isCompleted ? 'var(--success)' : 'white',
+          fontSize: '13px', fontWeight: 600,
+          cursor: saving || isCompleted ? 'not-allowed' : 'pointer',
+          transition: 'all 150ms', opacity: saving ? 0.6 : 1,
+        }}
       >
-        {saving
-          ? 'Enregistrement...'
-          : isCompleted
-          ? 'Jour complété'
-          : 'Marquer comme complété'}
+        {saving ? 'Enregistrement...' : isCompleted ? 'Jour complété ✓' : 'Marquer comme complété'}
       </button>
     </div>
   )

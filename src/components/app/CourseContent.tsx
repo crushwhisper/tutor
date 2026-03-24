@@ -5,6 +5,12 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { Course, QCMQuestion, Flashcard } from '@/types'
 import { useAppStore } from '@/store/app'
+import { formatMedicalContent } from '@/lib/formatMedicalContent'
+import {
+  Brain, Headphones, ClipboardText, Cards, ChatCircle,
+  CheckCircle, ArrowClockwise, CaretLeft, CaretRight,
+  ArrowRight, BookOpen, X,
+} from '@phosphor-icons/react'
 
 interface CourseWithModule extends Course {
   modules: { name: string } | null
@@ -14,51 +20,55 @@ interface Props {
   course: CourseWithModule
   isPro: boolean
   userId: string
+  moduleSlug: string
+  isCompleted: boolean
+  initialScore: number | null
 }
 
-type Tab = 'cours' | 'mindmap' | 'audio' | 'qcm' | 'flashcards' | 'question'
+type Tool = 'mindmap' | 'qcm' | 'flashcards' | 'audio' | 'question'
 
-const TABS: { id: Tab; label: string; icon: string; isPro?: boolean }[] = [
-  { id: 'cours', label: 'Cours', icon: '📖' },
-  { id: 'mindmap', label: 'Carte mentale', icon: '🧠' },
-  { id: 'audio', label: 'Audio', icon: '🎧', isPro: true },
-  { id: 'qcm', label: 'QCM', icon: '📝' },
-  { id: 'flashcards', label: 'Flashcards', icon: '🃏' },
-  { id: 'question', label: 'Question directe', icon: '💬' },
+const TOOLS: { id: Tool; label: string; Icon: React.ElementType; proOnly?: boolean }[] = [
+  { id: 'mindmap', label: 'Carte mentale', Icon: Brain },
+  { id: 'qcm', label: 'QCM', Icon: ClipboardText },
+  { id: 'flashcards', label: 'Flashcards', Icon: Cards },
+  { id: 'audio', label: 'Audio', Icon: Headphones, proOnly: true },
+  { id: 'question', label: 'Question', Icon: ChatCircle },
 ]
 
-export default function CourseContent({ course, isPro, userId }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>('cours')
+export default function CourseContent({ course, isPro, userId, isCompleted: initCompleted, initialScore }: Props) {
   const { addToast } = useAppStore()
+  const [activeTool, setActiveTool] = useState<Tool | null>(null)
+  const [completed, setCompleted] = useState(initCompleted)
+  const [markingDone, setMarkingDone] = useState(false)
 
-  // --- Mindmap state ---
-  const [mindmapMarkdown, setMindmapMarkdown] = useState<string | null>(null)
+  // --- Mindmap ---
+  const [mindmapMd, setMindmapMd] = useState<string | null>(null)
   const [mindmapLoading, setMindmapLoading] = useState(false)
   const mindmapRef = useRef<HTMLDivElement>(null)
 
-  // --- Audio state ---
+  // --- Audio ---
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [audioLoading, setAudioLoading] = useState(false)
 
-  // --- QCM state ---
+  // --- QCM ---
   const [qcmQuestions, setQcmQuestions] = useState<QCMQuestion[]>([])
   const [qcmLoading, setQcmLoading] = useState(false)
   const [qcmAnswers, setQcmAnswers] = useState<(number | null)[]>([])
   const [qcmSubmitted, setQcmSubmitted] = useState(false)
 
-  // --- Flashcards state ---
+  // --- Flashcards ---
   const [flashcards, setFlashcards] = useState<Flashcard[]>([])
   const [flashcardsLoading, setFlashcardsLoading] = useState(false)
   const [currentCard, setCurrentCard] = useState(0)
   const [revealed, setRevealed] = useState(false)
 
-  // --- Direct question state ---
+  // --- Question ---
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState<string | null>(null)
   const [questionLoading, setQuestionLoading] = useState(false)
 
   async function generateMindmap() {
-    if (mindmapMarkdown) return
+    if (mindmapMd) return
     setMindmapLoading(true)
     try {
       const res = await fetch('/api/ai/mindmap', {
@@ -67,34 +77,28 @@ export default function CourseContent({ course, isPro, userId }: Props) {
         body: JSON.stringify({ courseId: course.id, content: course.content }),
       })
       const data = await res.json()
-      if (data.markdown) {
-        setMindmapMarkdown(data.markdown)
-      }
+      if (data.markdown) setMindmapMd(data.markdown)
     } catch {
       addToast({ type: 'error', title: 'Erreur', message: 'Impossible de générer la carte mentale.' })
     }
     setMindmapLoading(false)
   }
 
-  // Render mindmap with markmap when markdown is ready
   useEffect(() => {
-    if (!mindmapMarkdown || !mindmapRef.current) return
+    if (!mindmapMd || !mindmapRef.current) return
     const container = mindmapRef.current
-
     import('markmap-lib').then(({ Transformer }) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       import('markmap-view').then(({ Markmap }: { Markmap: any }) => {
-        const transformer = new Transformer()
-        const { root } = transformer.transform(mindmapMarkdown)
+        const { root } = new Transformer().transform(mindmapMd)
         container.innerHTML = ''
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
         svg.style.width = '100%'
-        svg.style.height = '500px'
+        svg.style.height = '420px'
         container.appendChild(svg)
         Markmap.create(svg, undefined, root)
       })
     })
-  }, [mindmapMarkdown])
+  }, [mindmapMd])
 
   async function generateAudio() {
     if (audioUrl) return
@@ -143,9 +147,7 @@ export default function CourseContent({ course, isPro, userId }: Props) {
         body: JSON.stringify({ courseId: course.id, content: course.content }),
       })
       const data = await res.json()
-      if (data.flashcards) {
-        setFlashcards(data.flashcards)
-      }
+      if (data.flashcards) setFlashcards(data.flashcards)
     } catch {
       addToast({ type: 'error', title: 'Erreur', message: 'Impossible de générer les flashcards.' })
     }
@@ -170,286 +172,519 @@ export default function CourseContent({ course, isPro, userId }: Props) {
     setQuestionLoading(false)
   }
 
-  function handleTabChange(tab: Tab) {
-    setActiveTab(tab)
-    // Audio auto-loads when switching to the tab (it's a Pro feature with no manual trigger needed)
-    if (tab === 'audio') generateAudio()
+  function handleToolClick(tool: Tool) {
+    const isProTool = TOOLS.find(t => t.id === tool)?.proOnly
+    if (isProTool && !isPro) return
+    setActiveTool(activeTool === tool ? null : tool)
+    if (tool === 'audio' && activeTool !== 'audio') generateAudio()
+    if (tool === 'qcm' && activeTool !== 'qcm') generateQCM()
+    if (tool === 'flashcards' && activeTool !== 'flashcards') generateFlashcards()
+    if (tool === 'mindmap' && activeTool !== 'mindmap') generateMindmap()
+  }
+
+  async function markComplete() {
+    if (markingDone) return
+    setMarkingDone(true)
+    try {
+      await fetch('/api/progress/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId: course.id }),
+      })
+      setCompleted(true)
+      addToast({ type: 'success', title: 'Cours complété !', message: 'Votre progression a été enregistrée.' })
+    } catch {
+      addToast({ type: 'error', title: 'Erreur', message: 'Impossible d\'enregistrer la progression.' })
+    }
+    setMarkingDone(false)
   }
 
   const qcmScore = qcmSubmitted
     ? Math.round((qcmAnswers.filter((a, i) => a === qcmQuestions[i]?.correct_answer).length / qcmQuestions.length) * 100)
     : null
 
+  const formattedContent = course.content ? formatMedicalContent(course.content) : null
+
   return (
-    <div>
-      {/* Course header */}
-      <div className="glass-card p-6 mb-6">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-semibold text-white mb-2">{course.title}</h1>
-            <div className="flex items-center gap-3 text-sm text-muted">
-              <span>{course.modules?.name}</span>
-              <span>·</span>
-              <span>{course.duration_minutes} min</span>
-              <span>·</span>
-              <span className="capitalize">{course.difficulty}</span>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 192px', gap: '28px', alignItems: 'start' }}>
+
+      {/* ── LEFT: content ── */}
+      <div>
+
+      {/* ── Course header ── */}
+      <div style={{ marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--app-text)', letterSpacing: '-0.4px', lineHeight: 1.3, marginBottom: '10px' }}>
+          {course.title}
+        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '12px', color: 'var(--app-text-muted)' }}>{course.modules?.name}</span>
+          <span style={{ color: 'var(--app-border)' }}>·</span>
+          <span style={{ fontSize: '12px', color: 'var(--app-text-muted)' }}>{course.duration_minutes} min</span>
+          <span style={{ color: 'var(--app-border)' }}>·</span>
+          <span style={{ fontSize: '12px', color: 'var(--app-text-muted)', textTransform: 'capitalize' }}>{course.difficulty}</span>
+        </div>
+        {course.summary && (
+          <p style={{ fontSize: '14px', color: 'var(--app-text-muted)', lineHeight: 1.6, marginTop: '10px', borderTop: '1px solid var(--app-border)', paddingTop: '10px' }}>
+            {course.summary}
+          </p>
+        )}
+      </div>
+
+      {/* ── Course content ── */}
+      <div style={{ background: 'var(--app-surface)', border: '1px solid var(--app-border)', borderRadius: '16px', padding: '40px 48px', marginBottom: '20px' }}>
+        {formattedContent ? (
+          <div className="prose-tutor">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{formattedContent}</ReactMarkdown>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '64px 0', color: 'var(--app-text-muted)', fontSize: '14px' }}>
+            <BookOpen size={32} style={{ color: 'var(--app-border)', marginBottom: '12px', display: 'block', margin: '0 auto 12px' }} />
+            <p>Le contenu de ce cours n&apos;est pas encore disponible.</p>
+          </div>
+        )}
+      </div>
+
+      </div>{/* end LEFT */}
+
+      {/* ── RIGHT: Sticky toolbar ── */}
+      <div style={{ position: 'sticky', top: '80px' }}>
+        <div style={{
+          background: 'var(--app-surface)',
+          border: '1px solid var(--app-border)',
+          borderRadius: '14px',
+          overflow: 'hidden',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+        }}>
+          <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--app-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <p style={{ fontSize: '10px', fontWeight: 700, color: 'var(--app-text-ghost)', letterSpacing: '1px', textTransform: 'uppercase' }}>
+              Outils IA
+            </p>
+            {completed && <CheckCircle size={13} weight="fill" style={{ color: 'var(--success)', flexShrink: 0 }} />}
+          </div>
+          {TOOLS.map((tool, idx) => {
+            const isProTool = tool.proOnly && !isPro
+            const isActive = activeTool === tool.id
+            const isLast = idx === TOOLS.length - 1
+            return (
+              <button
+                key={tool.id}
+                onClick={() => handleToolClick(tool.id)}
+                disabled={isProTool}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  width: '100%', padding: '10px 14px',
+                  borderBottom: isLast ? 'none' : '1px solid var(--app-border)',
+                  background: isActive ? 'var(--accent-soft)' : 'transparent',
+                  border: 'none',
+                  cursor: isProTool ? 'not-allowed' : 'pointer',
+                  opacity: isProTool ? 0.45 : 1,
+                  transition: 'background 150ms',
+                  textAlign: 'left',
+                }}
+                onMouseEnter={(e) => { if (!isActive && !isProTool) e.currentTarget.style.background = 'var(--app-surface-hover, rgba(0,0,0,0.025))' }}
+                onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
+              >
+                <tool.Icon size={15} weight={isActive ? 'fill' : 'regular'} style={{ color: isActive ? 'var(--accent)' : 'var(--app-text-muted)', flexShrink: 0 }} />
+                <span style={{ fontSize: '12px', fontWeight: isActive ? 600 : 500, color: isActive ? 'var(--accent)' : 'var(--app-text)', flex: 1 }}>
+                  {tool.label}
+                </span>
+                {tool.proOnly && !isPro && (
+                  <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.5px', background: 'rgba(245,158,11,0.1)', color: 'var(--warning)', padding: '1px 5px', borderRadius: '999px' }}>PRO</span>
+                )}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Complete button */}
+        <div style={{ marginTop: '8px' }}>
+          {completed ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '9px', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '10px', fontSize: '12px', fontWeight: 600, color: 'var(--success)' }}>
+              <CheckCircle size={13} weight="fill" /> Complété
             </div>
+          ) : (
+            <button
+              onClick={markComplete}
+              disabled={markingDone}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', background: 'var(--accent)', color: 'white', border: 'none', borderRadius: '10px', padding: '9px', fontSize: '12px', fontWeight: 600, cursor: markingDone ? 'not-allowed' : 'pointer', opacity: markingDone ? 0.7 : 1 }}
+            >
+              <CheckCircle size={13} weight="bold" />
+              {markingDone ? '...' : 'Marquer complété'}
+            </button>
+          )}
+        </div>
+      </div>{/* end RIGHT */}
+
+      {/* ── Tool panel: fixed overlay when active ── */}
+      {activeTool && (
+        <div style={{
+          position: 'fixed',
+          right: '24px',
+          top: '80px',
+          width: '360px',
+          maxHeight: 'calc(100vh - 100px)',
+          overflowY: 'auto',
+          background: 'var(--app-surface)',
+          border: '1px solid var(--app-border)',
+          borderRadius: '16px',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.12)',
+          zIndex: 50,
+        }}>
+          <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--app-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, background: 'var(--app-surface)', zIndex: 1 }}>
+            <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--app-text)' }}>
+              {TOOLS.find(t => t.id === activeTool)?.label}
+            </p>
+            <button onClick={() => setActiveTool(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--app-text-muted)', display: 'flex', alignItems: 'center', padding: '2px' }}>
+              <X size={15} />
+            </button>
+          </div>
+          <div style={{ padding: '16px' }}>
+            {activeTool === 'mindmap' && (
+              <MindmapPanel loading={mindmapLoading} markdown={mindmapMd} divRef={mindmapRef} onGenerate={generateMindmap} />
+            )}
+            {activeTool === 'audio' && (
+              <AudioPanel loading={audioLoading} audioUrl={audioUrl} />
+            )}
+            {activeTool === 'qcm' && (
+              <QCMPanel
+                loading={qcmLoading}
+                questions={qcmQuestions}
+                answers={qcmAnswers}
+                submitted={qcmSubmitted}
+                score={qcmScore}
+                onAnswer={(qi, oi) => setQcmAnswers(prev => { const n = [...prev]; n[qi] = oi; return n })}
+                onSubmit={() => setQcmSubmitted(true)}
+                onReset={() => { setQcmSubmitted(false); setQcmAnswers(new Array(qcmQuestions.length).fill(null)) }}
+                onGenerate={generateQCM}
+              />
+            )}
+            {activeTool === 'flashcards' && (
+              <FlashcardsPanel
+                loading={flashcardsLoading}
+                flashcards={flashcards}
+                currentCard={currentCard}
+                revealed={revealed}
+                onReveal={() => setRevealed(!revealed)}
+                onPrev={() => { setCurrentCard(Math.max(0, currentCard - 1)); setRevealed(false) }}
+                onNext={() => { setCurrentCard(Math.min(flashcards.length - 1, currentCard + 1)); setRevealed(false) }}
+                onGenerate={generateFlashcards}
+              />
+            )}
+            {activeTool === 'question' && (
+              <QuestionPanel
+                question={question}
+                answer={answer}
+                loading={questionLoading}
+                onChange={setQuestion}
+                onAsk={askQuestion}
+              />
+            )}
           </div>
         </div>
-      </div>
+      )}
+    </div>
+  )
+}
 
-      {/* Tab navigation */}
-      <div className="flex gap-1 mb-6 bg-navy-800 p-1 rounded-2xl overflow-x-auto">
-        {TABS.map((tab) => {
-          const isProTab = tab.isPro && !isPro
-          return (
-            <button
-              key={tab.id}
-              onClick={() => !isProTab && handleTabChange(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
-                activeTab === tab.id
-                  ? 'bg-gold text-navy-900'
-                  : isProTab
-                  ? 'text-muted cursor-not-allowed'
-                  : 'text-muted hover:text-white'
-              }`}
-            >
-              <span>{tab.icon}</span>
-              {tab.label}
-              {isProTab && <span className="text-xs px-1 rounded bg-gold/20 text-gold">Pro</span>}
-            </button>
-          )
-        })}
-      </div>
+/* ── Tool Panels ── */
 
-      {/* Tab content */}
-      <div className="glass-card p-6">
-        {/* Cours tab */}
-        {activeTab === 'cours' && (
-          <div className="prose-tutor max-w-none">
-            {course.content ? (
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{course.content}</ReactMarkdown>
-            ) : (
-              <p className="text-muted text-center py-8">Contenu du cours non disponible.</p>
-            )}
-          </div>
-        )}
+function MindmapPanel({ loading, markdown, divRef, onGenerate }: {
+  loading: boolean; markdown: string | null; divRef: React.RefObject<HTMLDivElement | null>; onGenerate: () => void
+}) {
+  if (loading) return <LoadingState label="Génération de la carte mentale..." />
+  if (markdown) return <div ref={divRef} style={{ width: '100%', minHeight: '300px', borderRadius: '8px', overflow: 'hidden', background: 'white' }} />
+  return (
+    <EmptyState
+      icon={<Brain size={28} style={{ color: 'var(--app-text-ghost)' }} />}
+      label="Générez une carte mentale à partir du cours."
+      buttonLabel="Générer"
+      onAction={onGenerate}
+    />
+  )
+}
 
-        {/* Mindmap tab */}
-        {activeTab === 'mindmap' && (
-          <div>
-            {mindmapLoading ? (
-              <div className="text-center py-12 text-muted">
-                <div className="text-3xl mb-3 animate-pulse">🧠</div>
-                <p>Génération de la carte mentale...</p>
-              </div>
-            ) : mindmapMarkdown ? (
-              <div ref={mindmapRef} className="w-full min-h-96 bg-white rounded-xl" />
-            ) : (
-              <div className="text-center py-12">
-                <div className="text-4xl mb-4">🧠</div>
-                <p className="text-muted mb-6">Générez une carte mentale à partir du contenu de ce cours.</p>
-                <button onClick={generateMindmap} className="btn-primary">
-                  Générer la carte mentale
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+function AudioPanel({ loading, audioUrl }: { loading: boolean; audioUrl: string | null }) {
+  if (loading) return <LoadingState label="Génération audio en cours..." />
+  if (audioUrl) return (
+    <div>
+      <audio controls style={{ width: '100%' }} src={audioUrl} />
+    </div>
+  )
+  return <LoadingState label="Chargement..." />
+}
 
-        {/* Audio tab */}
-        {activeTab === 'audio' && (
-          <div className="text-center py-8">
-            {audioLoading ? (
-              <div>
-                <div className="text-4xl mb-3 animate-pulse">🎧</div>
-                <p className="text-muted">Génération de l&apos;audio...</p>
-                <p className="text-xs text-muted mt-2">Cela peut prendre quelques secondes</p>
-              </div>
-            ) : audioUrl ? (
-              <div className="space-y-4">
-                <div className="text-3xl">🎧</div>
-                <p className="text-white font-medium">Audio du cours</p>
-                <audio controls className="w-full max-w-md mx-auto" src={audioUrl} />
-              </div>
-            ) : (
-              <p className="text-muted">Chargement...</p>
-            )}
-          </div>
-        )}
-
-        {/* QCM tab */}
-        {activeTab === 'qcm' && (
-          <div>
-            {qcmLoading ? (
-              <div className="text-center py-12 text-muted">
-                <div className="text-3xl mb-3 animate-pulse">📝</div>
-                <p>Génération des QCM...</p>
-              </div>
-            ) : qcmQuestions.length > 0 ? (
-              <div className="space-y-6">
-                {qcmSubmitted && (
-                  <div className="glass-card p-4 text-center border-gold/30">
-                    <p className="text-white font-semibold text-lg">Score : <span className="text-gold">{qcmScore}%</span></p>
-                    <p className="text-muted text-sm mt-1">
-                      {qcmAnswers.filter((a, i) => a === qcmQuestions[i]?.correct_answer).length} / {qcmQuestions.length} bonnes réponses
-                    </p>
-                  </div>
-                )}
-                {qcmQuestions.map((q, qi) => (
-                  <div key={qi} className="space-y-3">
-                    <p className="text-white font-medium">{qi + 1}. {q.question}</p>
-                    <div className="space-y-2">
-                      {q.options.map((opt, oi) => {
-                        const isSelected = qcmAnswers[qi] === oi
-                        const isCorrect = qcmSubmitted && oi === q.correct_answer
-                        const isWrong = qcmSubmitted && isSelected && oi !== q.correct_answer
-                        return (
-                          <button
-                            key={oi}
-                            onClick={() => !qcmSubmitted && setQcmAnswers((prev) => {
-                              const next = [...prev]; next[qi] = oi; return next
-                            })}
-                            className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all ${
-                              isCorrect ? 'border-green-500/50 bg-green-500/10 text-green-400'
-                              : isWrong ? 'border-red-500/50 bg-red-500/10 text-red-400'
-                              : isSelected ? 'border-gold/50 bg-gold/10 text-gold'
-                              : 'border-white/10 text-muted hover:border-white/20 hover:text-white'
-                            }`}
-                          >
-                            <span className="font-semibold mr-2">{['A', 'B', 'C', 'D'][oi]}.</span>{opt}
-                          </button>
-                        )
-                      })}
-                    </div>
-                    {qcmSubmitted && q.explanation && (
-                      <p className="text-xs text-muted bg-navy-800 rounded-lg px-3 py-2">{q.explanation}</p>
-                    )}
-                  </div>
-                ))}
-                {!qcmSubmitted && (
-                  <button
-                    onClick={() => setQcmSubmitted(true)}
-                    disabled={qcmAnswers.some((a) => a === null)}
-                    className="btn-primary w-full disabled:opacity-50"
-                  >
-                    Soumettre mes réponses
-                  </button>
-                )}
-                {qcmSubmitted && (
-                  <button
-                    onClick={() => {
-                      setQcmSubmitted(false)
-                      setQcmAnswers(new Array(qcmQuestions.length).fill(null))
-                    }}
-                    className="btn-secondary w-full"
-                  >
-                    Recommencer
-                  </button>
-                )}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="text-4xl mb-4">📝</div>
-                <p className="text-muted mb-6">Générez des QCM à partir du contenu de ce cours.</p>
-                <button onClick={generateQCM} className="btn-primary">
-                  Générer les QCM
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Flashcards tab */}
-        {activeTab === 'flashcards' && (
-          <div>
-            {flashcardsLoading ? (
-              <div className="text-center py-12 text-muted">
-                <div className="text-3xl mb-3 animate-pulse">🃏</div>
-                <p>Génération des flashcards...</p>
-              </div>
-            ) : flashcards.length > 0 ? (
-              <div className="max-w-md mx-auto">
-                <div className="text-center text-sm text-muted mb-4">
-                  {currentCard + 1} / {flashcards.length}
-                </div>
-                <div
-                  className="glass-card p-8 min-h-48 flex items-center justify-center cursor-pointer border-gold/20 hover:border-gold/40 transition-colors"
-                  onClick={() => setRevealed(!revealed)}
+function QCMPanel({ loading, questions, answers, submitted, score, onAnswer, onSubmit, onReset, onGenerate }: {
+  loading: boolean; questions: QCMQuestion[]; answers: (number | null)[];
+  submitted: boolean; score: number | null;
+  onAnswer: (qi: number, oi: number) => void
+  onSubmit: () => void; onReset: () => void; onGenerate: () => void
+}) {
+  if (loading) return <LoadingState label="Génération des QCM..." />
+  if (questions.length === 0) return (
+    <EmptyState
+      icon={<ClipboardText size={28} style={{ color: 'var(--app-text-ghost)' }} />}
+      label="Testez vos connaissances avec des questions issues de la banque QCM."
+      buttonLabel="Charger les QCM"
+      onAction={onGenerate}
+    />
+  )
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {submitted && score !== null && (
+        <div style={{
+          textAlign: 'center', padding: '14px',
+          background: score >= 60 ? 'rgba(16,185,129,0.08)' : 'rgba(232,85,85,0.08)',
+          border: `1px solid ${score >= 60 ? 'rgba(16,185,129,0.2)' : 'rgba(232,85,85,0.2)'}`,
+          borderRadius: '10px',
+        }}>
+          <p style={{ fontSize: '20px', fontWeight: 700, color: score >= 60 ? 'var(--success)' : '#E85555' }}>
+            {score}%
+          </p>
+          <p style={{ fontSize: '12px', color: 'var(--app-text-muted)' }}>
+            {answers.filter((a, i) => a === questions[i]?.correct_answer).length} / {questions.length} bonnes réponses
+          </p>
+        </div>
+      )}
+      {questions.map((q, qi) => (
+        <div key={qi}>
+          <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--app-text)', marginBottom: '8px' }}>
+            {qi + 1}. {q.question}
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {q.options.map((opt, oi) => {
+              const isSelected = answers[qi] === oi
+              const isCorrect = submitted && oi === q.correct_answer
+              const isWrong = submitted && isSelected && oi !== q.correct_answer
+              return (
+                <button
+                  key={oi}
+                  onClick={() => !submitted && onAnswer(qi, oi)}
+                  style={{
+                    textAlign: 'left', padding: '8px 12px',
+                    borderRadius: '8px',
+                    border: `1px solid ${isCorrect ? 'rgba(16,185,129,0.4)' : isWrong ? 'rgba(232,85,85,0.4)' : isSelected ? 'var(--accent)' : 'var(--app-border)'}`,
+                    background: isCorrect ? 'rgba(16,185,129,0.08)' : isWrong ? 'rgba(232,85,85,0.08)' : isSelected ? 'var(--accent-soft)' : 'transparent',
+                    color: isCorrect ? 'var(--success)' : isWrong ? '#E85555' : isSelected ? 'var(--accent)' : 'var(--app-text)',
+                    fontSize: '12px', cursor: submitted ? 'default' : 'pointer',
+                    transition: 'all 150ms',
+                  }}
                 >
-                  <div className="text-center">
-                    {!revealed ? (
-                      <p className="text-white font-medium text-lg">{flashcards[currentCard].front}</p>
-                    ) : (
-                      <div>
-                        <p className="text-gold text-xs mb-3 uppercase tracking-widest">Réponse</p>
-                        <p className="text-white">{flashcards[currentCard].back}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <p className="text-muted text-xs text-center mt-3">Cliquez pour révéler</p>
-                <div className="flex gap-3 mt-4">
-                  <button
-                    onClick={() => { setCurrentCard(Math.max(0, currentCard - 1)); setRevealed(false) }}
-                    disabled={currentCard === 0}
-                    className="btn-ghost flex-1 disabled:opacity-30"
-                  >
-                    Précédente
-                  </button>
-                  <button
-                    onClick={() => { setCurrentCard(Math.min(flashcards.length - 1, currentCard + 1)); setRevealed(false) }}
-                    disabled={currentCard === flashcards.length - 1}
-                    className="btn-ghost flex-1 disabled:opacity-30"
-                  >
-                    Suivante
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="text-4xl mb-4">🃏</div>
-                <p className="text-muted mb-6">Générez des flashcards à partir du contenu de ce cours.</p>
-                <button onClick={generateFlashcards} className="btn-primary">
-                  Générer les flashcards
+                  <span style={{ fontWeight: 600, marginRight: '6px' }}>{['A', 'B', 'C', 'D', 'E'][oi]}.</span>
+                  {opt}
                 </button>
-              </div>
-            )}
+              )
+            })}
           </div>
-        )}
+          {submitted && q.explanation && (
+            <p style={{
+              fontSize: '11px', color: 'var(--app-text-muted)',
+              background: 'var(--app-bg)', borderRadius: '6px',
+              padding: '8px 10px', marginTop: '6px',
+            }}>
+              {q.explanation}
+            </p>
+          )}
+        </div>
+      ))}
+      {!submitted ? (
+        <button
+          onClick={onSubmit}
+          disabled={answers.some(a => a === null)}
+          style={{
+            background: 'var(--accent)', color: 'white',
+            border: 'none', borderRadius: '8px',
+            padding: '10px', fontSize: '13px', fontWeight: 600,
+            cursor: answers.some(a => a === null) ? 'not-allowed' : 'pointer',
+            opacity: answers.some(a => a === null) ? 0.5 : 1,
+          }}
+        >
+          Valider mes réponses
+        </button>
+      ) : (
+        <button
+          onClick={onReset}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+            background: 'transparent', color: 'var(--app-text-muted)',
+            border: '1px solid var(--app-border)', borderRadius: '8px',
+            padding: '8px', fontSize: '12px', cursor: 'pointer',
+          }}
+        >
+          <ArrowClockwise size={13} />
+          Recommencer
+        </button>
+      )}
+    </div>
+  )
+}
 
-        {/* Direct Question tab */}
-        {activeTab === 'question' && (
-          <div className="max-w-2xl mx-auto space-y-4">
-            <p className="text-muted text-sm">Posez une question sur le contenu de ce cours.</p>
-            <div className="flex gap-3">
-              <input
-                type="text"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && askQuestion()}
-                placeholder="Votre question..."
-                className="input-field flex-1"
-              />
-              <button
-                onClick={askQuestion}
-                disabled={questionLoading || !question.trim()}
-                className="btn-primary shrink-0 disabled:opacity-50"
-              >
-                {questionLoading ? '...' : 'Envoyer'}
-              </button>
-            </div>
-            {answer && (
-              <div className="glass-card p-5 border-gold/20">
-                <p className="text-xs text-gold mb-2 uppercase tracking-widest">Réponse</p>
-                <div className="prose-tutor text-sm">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{answer}</ReactMarkdown>
-                </div>
-              </div>
-            )}
+function FlashcardsPanel({ loading, flashcards, currentCard, revealed, onReveal, onPrev, onNext, onGenerate }: {
+  loading: boolean; flashcards: Flashcard[]; currentCard: number;
+  revealed: boolean; onReveal: () => void; onPrev: () => void; onNext: () => void; onGenerate: () => void
+}) {
+  if (loading) return <LoadingState label="Génération des flashcards..." />
+  if (flashcards.length === 0) return (
+    <EmptyState
+      icon={<Cards size={28} style={{ color: 'var(--app-text-ghost)' }} />}
+      label="Révisez avec des flashcards générées par IA."
+      buttonLabel="Générer les flashcards"
+      onAction={onGenerate}
+    />
+  )
+  const card = flashcards[currentCard]
+  return (
+    <div>
+      <p style={{ fontSize: '11px', color: 'var(--app-text-ghost)', textAlign: 'center', marginBottom: '10px' }}>
+        {currentCard + 1} / {flashcards.length}
+      </p>
+      <div
+        onClick={onReveal}
+        style={{
+          background: 'var(--app-bg)',
+          border: '1px solid var(--app-border)',
+          borderRadius: '10px',
+          padding: '20px 16px',
+          minHeight: '120px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer',
+          transition: 'border-color 150ms',
+          marginBottom: '8px',
+          textAlign: 'center',
+        }}
+      >
+        {!revealed ? (
+          <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--app-text)', lineHeight: 1.5 }}>
+            {card.front}
+          </p>
+        ) : (
+          <div>
+            <p style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent)', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '8px' }}>
+              Réponse
+            </p>
+            <p style={{ fontSize: '13px', color: 'var(--app-text)', lineHeight: 1.5 }}>
+              {card.back}
+            </p>
           </div>
         )}
       </div>
+      <p style={{ fontSize: '11px', color: 'var(--app-text-ghost)', textAlign: 'center', marginBottom: '12px' }}>
+        Cliquez pour révéler
+      </p>
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <button
+          onClick={onPrev}
+          disabled={currentCard === 0}
+          style={{
+            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+            background: 'transparent', color: 'var(--app-text-muted)',
+            border: '1px solid var(--app-border)', borderRadius: '8px',
+            padding: '8px', fontSize: '12px', cursor: currentCard === 0 ? 'not-allowed' : 'pointer',
+            opacity: currentCard === 0 ? 0.4 : 1,
+          }}
+        >
+          <CaretLeft size={13} /> Préc.
+        </button>
+        <button
+          onClick={onNext}
+          disabled={currentCard === flashcards.length - 1}
+          style={{
+            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+            background: 'transparent', color: 'var(--app-text-muted)',
+            border: '1px solid var(--app-border)', borderRadius: '8px',
+            padding: '8px', fontSize: '12px', cursor: currentCard === flashcards.length - 1 ? 'not-allowed' : 'pointer',
+            opacity: currentCard === flashcards.length - 1 ? 0.4 : 1,
+          }}
+        >
+          Suiv. <CaretRight size={13} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function QuestionPanel({ question, answer, loading, onChange, onAsk }: {
+  question: string; answer: string | null; loading: boolean;
+  onChange: (v: string) => void; onAsk: () => void
+}) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <textarea
+        value={question}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), onAsk())}
+        placeholder="Posez une question sur le cours..."
+        rows={3}
+        style={{
+          width: '100%', resize: 'vertical',
+          background: 'var(--app-bg)',
+          border: '1px solid var(--app-border)',
+          borderRadius: '8px',
+          padding: '10px 12px',
+          fontSize: '13px', color: 'var(--app-text)',
+          outline: 'none',
+          boxSizing: 'border-box',
+        }}
+      />
+      <button
+        onClick={onAsk}
+        disabled={loading || !question.trim()}
+        style={{
+          background: 'var(--accent)', color: 'white',
+          border: 'none', borderRadius: '8px',
+          padding: '9px', fontSize: '13px', fontWeight: 600,
+          cursor: loading || !question.trim() ? 'not-allowed' : 'pointer',
+          opacity: loading || !question.trim() ? 0.6 : 1,
+        }}
+      >
+        {loading ? 'Réflexion...' : 'Envoyer →'}
+      </button>
+      {answer && (
+        <div style={{
+          background: 'var(--app-bg)',
+          border: '1px solid var(--app-border)',
+          borderRadius: '8px',
+          padding: '12px',
+        }}>
+          <p style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent)', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '8px' }}>
+            Réponse
+          </p>
+          <p style={{ fontSize: '13px', color: 'var(--app-text)', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+            {answer}
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function LoadingState({ label }: { label: string }) {
+  return (
+    <div style={{ textAlign: 'center', padding: '24px 0', color: 'var(--app-text-muted)', fontSize: '13px' }}>
+      <div style={{ marginBottom: '8px', opacity: 0.5 }}>⏳</div>
+      {label}
+    </div>
+  )
+}
+
+function EmptyState({ icon, label, buttonLabel, onAction }: {
+  icon: React.ReactNode; label: string; buttonLabel: string; onAction: () => void
+}) {
+  return (
+    <div style={{ textAlign: 'center', padding: '16px 0' }}>
+      <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center' }}>{icon}</div>
+      <p style={{ fontSize: '12px', color: 'var(--app-text-muted)', marginBottom: '14px', lineHeight: 1.5 }}>{label}</p>
+      <button
+        onClick={onAction}
+        style={{
+          background: 'var(--accent-soft)',
+          color: 'var(--accent)',
+          border: '1px solid var(--accent-glow, rgba(59,130,246,0.2))',
+          borderRadius: '8px', padding: '8px 16px',
+          fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+        }}
+      >
+        {buttonLabel}
+      </button>
     </div>
   )
 }

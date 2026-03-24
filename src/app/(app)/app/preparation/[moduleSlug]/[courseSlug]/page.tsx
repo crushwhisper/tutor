@@ -1,7 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
+import { ArrowLeft } from '@phosphor-icons/react/dist/ssr'
 import CourseContent from '@/components/app/CourseContent'
+import { checkIsPro } from '@/lib/isPro'
 
 interface Props {
   params: Promise<{ moduleSlug: string; courseSlug: string }>
@@ -18,31 +21,21 @@ export default async function CoursePage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Fetch course with module info
-  const { data: course } = await supabase
-    .from('courses')
-    .select('*, modules(*)')
-    .eq('slug', courseSlug)
-    .single()
+  const [{ data: course }, { data: userProfile }] = await Promise.all([
+    supabaseAdmin.from('courses').select('*, modules(*)').eq('slug', courseSlug).single(),
+    supabaseAdmin.from('users').select('role, subscription_plan, subscription_status').eq('id', user.id).single(),
+  ])
 
   if (!course) notFound()
 
-  // Fetch user profile (for pro check)
-  const { data: userProfile } = await supabase
-    .from('users')
-    .select('subscription_plan, subscription_status')
-    .eq('id', user.id)
-    .single()
+  const isPro = checkIsPro(userProfile)
 
-  const isPro = userProfile?.subscription_plan === 'pro' && userProfile?.subscription_status === 'active'
-
-  // Check if user can access this course
   if (course.is_premium && !isPro) {
-    redirect('/app/settings?tab=subscription')
+    redirect('/pricing')
   }
 
-  // Update/create progress entry
-  await supabase
+  // Mark as accessed
+  await supabaseAdmin
     .from('user_progress')
     .upsert({
       user_id: user.id,
@@ -50,20 +43,50 @@ export default async function CoursePage({ params }: Props) {
       last_accessed_at: new Date().toISOString(),
     }, { onConflict: 'user_id,course_id', ignoreDuplicates: false })
 
+  // Get current progress
+  const { data: progress } = await supabaseAdmin
+    .from('user_progress')
+    .select('completed, score')
+    .eq('user_id', user.id)
+    .eq('course_id', course.id)
+    .single()
+
+  const moduleName = (course as any).modules?.name ?? moduleSlug
+
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-muted flex-wrap">
-        <Link href="/app/preparation" className="hover:text-gold transition-colors">Modules</Link>
-        <span>/</span>
-        <Link href={`/app/preparation/${moduleSlug}`} className="hover:text-gold transition-colors">
-          {(course as any).modules?.name ?? moduleSlug}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
+        <Link
+          href={`/app/preparation/${moduleSlug}`}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            fontSize: '13px', color: 'var(--app-text-muted)',
+            textDecoration: 'none',
+          }}
+        >
+          <ArrowLeft size={14} />
+          {moduleName}
         </Link>
-        <span>/</span>
-        <span className="text-white truncate max-w-xs">{course.title}</span>
+        <span style={{ color: 'var(--app-border)', fontSize: '13px' }}>/</span>
+        <span style={{
+          fontSize: '13px', color: 'var(--app-text)', fontWeight: 500,
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+          maxWidth: '320px',
+        }}>
+          {course.title}
+        </span>
       </div>
 
-      <CourseContent course={course as any} isPro={isPro} userId={user.id} />
+      <CourseContent
+        course={course as any}
+        isPro={isPro}
+        userId={user.id}
+        moduleSlug={moduleSlug}
+        isCompleted={progress?.completed ?? false}
+        initialScore={progress?.score ?? null}
+      />
     </div>
   )
 }

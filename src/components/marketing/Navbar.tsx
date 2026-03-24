@@ -177,7 +177,7 @@ export default function Navbar() {
           <motion.div whileHover={{ y: -1 }}>
             <Link
               href="/auth/signup"
-              className="btn-glow"
+              className="btn-cta"
               style={{
                 fontFamily: 'Outfit, system-ui, sans-serif',
                 fontSize: '14px',
@@ -252,7 +252,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="btn-glow"
+                  className="btn-cta"
                   style={{
                     fontFamily: 'Outfit, system-ui, sans-serif',
                     fontWeight: 600,
