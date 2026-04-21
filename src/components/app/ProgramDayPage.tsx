@@ -9,6 +9,9 @@ interface CourseWithModule {
   id: string
   title: string
   slug: string
+  summary: string | null
+  content: string | null
+  duration_minutes: number | null
   modules: { slug: string; name: string } | null
 }
 

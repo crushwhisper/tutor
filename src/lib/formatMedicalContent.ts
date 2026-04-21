@@ -71,6 +71,13 @@ export function formatMedicalContent(raw: string): string {
       continue
     }
 
+    // --- Already-markdown: pass through lines that start with # | | or other md syntax ---
+    if (/^#{1,4}\s/.test(line) || /^\|/.test(line) || /^---+$/.test(line) || /^>\s/.test(line)) {
+      flush(line, 'md')
+      i++
+      continue
+    }
+
     // --- ALL CAPS HEADER ---
     if (isAllCapsHeader(line)) {
       const colonIdx = line.indexOf(' :')

@@ -1,8 +1,13 @@
-import { stripe } from '@/lib/stripe'
+import Stripe from 'stripe'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { sendProUpgradeEmail } from '@/lib/resend'
 import { NextResponse } from 'next/server'
-import type Stripe from 'stripe'
+
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY
+  if (!key) throw new Error('STRIPE_SECRET_KEY is not set')
+  return new Stripe(key, { apiVersion: '2026-02-25.clover', typescript: true })
+}
 
 export async function POST(request: Request) {
   const body = await request.text()
@@ -10,7 +15,7 @@ export async function POST(request: Request) {
 
   let event: Stripe.Event
   try {
-    event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!)
+    event = getStripe().webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!)
   } catch (err) {
     console.error('Webhook signature verification failed:', err)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
@@ -23,7 +28,7 @@ export async function POST(request: Request) {
       if (!userId) break
 
       // Get subscription details
-      const subscription = await stripe.subscriptions.retrieve(session.subscription as string)
+      const subscription = await getStripe().subscriptions.retrieve(session.subscription as string)
       const customerId = session.customer as string
 
       // current_period_end lives on the subscription item in this API version

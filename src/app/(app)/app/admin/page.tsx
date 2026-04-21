@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { Users, Crown, BookOpen, ClipboardText } from '@phosphor-icons/react/dist/ssr'
+import QcmExtractor from './QcmExtractor'
 
 export default async function AdminPage() {
   const supabase = await createClient()
@@ -91,8 +92,11 @@ export default async function AdminPage() {
         ))}
       </div>
 
+      {/* QCM Extractor */}
+      <QcmExtractor />
+
       {/* Recent users */}
-      <div style={surface}>
+      <div style={{ ...surface, marginTop: '20px' }}>
         <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--app-text)', marginBottom: '20px' }}>
           Derniers inscrits
         </p>

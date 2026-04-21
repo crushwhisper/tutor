@@ -5,35 +5,59 @@ export const anthropic = new Anthropic({
 })
 
 export const PROMPTS = {
-  MINDMAP: (content: string) => `Tu es un expert en médecine et pédagogie. Crée une carte mentale détaillée en Markdown au format Markmap pour le cours suivant.
-Utilise des # pour les niveaux hiérarchiques. Sois précis, exhaustif et structuré.
-N'inclus que le Markdown, pas d'explications.
+  MINDMAP: (content: string) => `Tu es un expert en médecine et pédagogie spécialisé dans la préparation aux concours médicaux (PCEM, ECN, résidanat).
 
-Cours:
+Génère une carte mentale COMPLÈTE et EXHAUSTIVE au format Markmap (Markdown hiérarchique).
+
+RÈGLES STRICTES :
+- Commence par "# [Titre du cours]" (nœud racine)
+- Utilise ## pour les grandes catégories (max 6-8)
+- Utilise ### pour les sous-catégories
+- Utilise #### pour les détails précis
+- Utilise des listes à puces (-) pour les éléments feuilles
+- Inclus TOUS les chiffres clés, valeurs normales, seuils importants entre parenthèses
+- Inclus les mnémotechniques si pertinents
+- Ajoute des emojis devant chaque ## pour la lisibilité (ex: 🔬 Physiopathologie, 💊 Traitement, ⚠️ Complications)
+- NE JAMAIS inclure d'explications hors du markdown
+- Minimum 40 nœuds, maximum 80 nœuds
+- Réponds UNIQUEMENT avec le markdown, sans balises de code
+
+Cours à transformer :
 ${content}`,
 
-  QCM: (content: string, count = 10) => `Tu es un expert en préparation aux concours médicaux. Génère ${count} QCM originaux basés sur ce cours.
-Format JSON strict:
+  QCM: (content: string, count = 10) => `Tu es un expert en préparation aux concours médicaux (UM6SS, résidanat).
+
+Génère ${count} QCM UNIQUEMENT à partir du contenu ci-dessous. Chaque question doit porter sur un fait précis présent dans ce cours (chiffre, définition, mécanisme, traitement, complication).
+
+RÈGLES STRICTES :
+- Les questions doivent être 100% basées sur le texte fourni, pas sur des connaissances générales
+- 4 options par question, une seule bonne réponse
+- correct_answer = index 0-3 de la bonne réponse
+- explanation = pourquoi cette réponse est correcte (avec la référence dans le cours)
+
+Format JSON strict (uniquement le tableau, rien d'autre) :
 [{
   "question": "...",
   "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
   "correct_answer": 0,
   "explanation": "..."
 }]
-correct_answer est l'index (0-3) de la bonne réponse.
 
-Cours:
-${content}`,
+Cours à utiliser :
+${content.slice(0, 4000)}`,
 
-  FLASHCARDS: (content: string, count = 15) => `Tu es un expert pédagogique médical. Génère ${count} flashcards pour mémoriser ce cours.
-Format JSON strict:
+  FLASHCARDS: (content: string, count = 15) => `Tu es un expert pédagogique médical.
+
+Génère ${count} flashcards UNIQUEMENT à partir du contenu ci-dessous. Chaque flashcard doit porter sur un élément clé de CE cours spécifiquement (définition, chiffre important, mécanisme, signe clinique, traitement).
+
+Format JSON strict (uniquement le tableau) :
 [{
-  "front": "Question ou terme médical",
-  "back": "Réponse ou définition complète"
+  "front": "Question ou terme médical du cours",
+  "back": "Réponse ou définition tirée du cours"
 }]
 
-Cours:
-${content}`,
+Cours :
+${content.slice(0, 4000)}`,
 
   SUMMARY: (content: string) => `Tu es un expert médical. Rédige un résumé structuré et concis de ce cours en français.
 Inclus: points clés, définitions importantes, chiffres à retenir.

@@ -17,7 +17,6 @@ export default function ScienceCTA() {
     }}>
       <div className="max-w-3xl mx-auto px-6">
 
-        {/* Eyebrow */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
@@ -39,7 +38,6 @@ export default function ScienceCTA() {
           }}>Inscription gratuite</span>
         </motion.div>
 
-        {/* Headline */}
         <motion.h2
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -69,7 +67,6 @@ export default function ScienceCTA() {
           TUTOR transforme ces principes en outils concrets.
         </motion.p>
 
-        {/* CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}

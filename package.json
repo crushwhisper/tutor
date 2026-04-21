@@ -22,6 +22,7 @@
     "lucide-react": "^0.577.0",
     "markmap-lib": "^0.18.12",
     "markmap-view": "^0.18.12",
+    "mermaid": "^10.9.5",
     "multer": "^2.1.1",
     "next": "16.2.0",
     "openai": "^6.32.0",

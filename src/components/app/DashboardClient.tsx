@@ -69,7 +69,7 @@ export default function DashboardClient({ profile, completedCount, isPro }: Prop
             glowColor="rgba(59,130,246,0.12)"
           />
           <VoieCard
-            href="/app/programmes/90"
+            href="/app/programmes/90j"
             icon={<Lightning size={32} weight="duotone" style={{ color: 'var(--warning)' }} />}
             title="Programme 3 Mois"
             badge={{ label: 'INTENSIF', color: 'var(--warning)', bg: 'var(--warning-soft)' }}
@@ -80,7 +80,7 @@ export default function DashboardClient({ profile, completedCount, isPro }: Prop
             locked={!isPro}
           />
           <VoieCard
-            href="/app/programmes/180"
+            href="/app/programmes/180j"
             icon={<CalendarDots size={32} weight="duotone" style={{ color: 'var(--success)' }} />}
             title="Programme 6 Mois"
             badge={{ label: 'RECOMMANDÉ', color: 'var(--success)', bg: 'var(--success-soft)' }}

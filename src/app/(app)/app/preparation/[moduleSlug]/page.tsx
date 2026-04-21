@@ -66,6 +66,8 @@ export default async function ModuleCoursesPage({ params, searchParams }: Props)
     if (/^[A-Z]{1,3}[\s–\-\.]\s/.test(t)) return false
     // Titles ending with " :" are section headers ("RAPPORTS :", "VASCULARISATION :")
     if (t.endsWith(' :') || t.endsWith(':')) return false
+    // Bare anatomical subsection headers without colon ("Rapports", "Vascularisation", "Innervation")
+    if (/^(rapports|vascularisation|innervation|lymphatiques?|situation|configuration|g[ée]n[ée]ralit[ée]s?)$/i.test(t)) return false
     // Roman numerals subsections "I.", "II.", "III."
     if (/^[IVX]+\.\s/.test(t)) return false
     // Very short content = subsection without real body

@@ -33,7 +33,7 @@ export default async function ExamenBlancPage() {
           Examens Blancs
         </h1>
         <p style={{ fontSize: '15px', color: 'var(--app-text-muted)', lineHeight: 1.6, marginBottom: '28px' }}>
-          Simulez les conditions du concours avec un timer et obtenez un radar de vos performances.
+          Simulez les conditions du concours avec un timer, des QCM par matière et des questions rédactionnelles corrigées par IA.
           Disponible avec le plan Pro.
         </p>
         <Link

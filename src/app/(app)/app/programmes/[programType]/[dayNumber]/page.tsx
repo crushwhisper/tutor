@@ -12,6 +12,9 @@ interface CourseWithModule {
   id: string
   title: string
   slug: string
+  summary: string | null
+  content: string | null
+  duration_minutes: number | null
   modules: { slug: string; name: string } | null
 }
 
@@ -50,7 +53,7 @@ export default async function ProgramDayPage({ params }: Props) {
 
   const courseIds: string[] = (programDay as ProgramDay | null)?.course_ids ?? []
   const { data: courses } = courseIds.length > 0
-    ? await supabaseAdmin.from('courses').select('id, title, slug, modules(slug, name)').in('id', courseIds)
+    ? await supabaseAdmin.from('courses').select('id, title, slug, summary, content, duration_minutes, modules(slug, name)').in('id', courseIds)
     : { data: [] as CourseWithModule[] }
 
   return (
