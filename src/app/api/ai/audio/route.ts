@@ -6,9 +6,10 @@ import { anthropic } from '@/lib/anthropic'
 
 export const maxDuration = 60
 
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
-const VOICE_ID = 'JBFqnCBsd6RMkjVDRZzb' // George — multilingual, excellent en français
-const MODEL_ID = 'eleven_multilingual_v2'
+const FAL_KEY = process.env.FAL_KEY
+// fal.ai synchronous endpoint for Chatterbox TTS
+// Docs: https://fal.ai/models/fal-ai/chatterbox
+const FAL_CHATTERBOX_URL = 'https://fal.run/fal-ai/chatterbox'
 
 const NARRATION_PROMPTS: Record<string, (title: string, content: string) => string> = {
   short: (title, content) => `Tu es un professeur de médecine passionné. Crée une narration audio COURTE (environ 400 mots) du cours "${title}" destinée à des étudiants en médecine préparant leur concours.
@@ -56,8 +57,8 @@ export async function POST(request: Request) {
   const { content, title, length = 'default' } = await request.json()
   if (!content) return NextResponse.json({ error: 'No content' }, { status: 400 })
 
-  if (!ELEVENLABS_API_KEY) {
-    return NextResponse.json({ error: 'ElevenLabs API key not configured' }, { status: 500 })
+  if (!FAL_KEY) {
+    return NextResponse.json({ error: 'FAL_KEY not configured' }, { status: 500 })
   }
 
   try {
@@ -70,32 +71,60 @@ export async function POST(request: Request) {
     })
     const narration = (claudeRes.content[0] as { text: string }).text.trim()
 
-    // 2. ElevenLabs TTS
-    const ttsRes = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
-      {
-        method: 'POST',
-        headers: {
-          'xi-api-key': ELEVENLABS_API_KEY,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text: narration,
-          model_id: MODEL_ID,
-          voice_settings: { stability: 0.45, similarity_boost: 0.8, style: 0.2 },
-        }),
-      }
-    )
+    // 2. Chatterbox TTS via fal.ai
+    // Input: { text, exaggeration?, cfg_weight?, audio_prompt_url? }
+    // Output: { audio: { url, content_type, file_name, file_size } }
+    const falRes = await fetch(FAL_CHATTERBOX_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Key ${FAL_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: narration,
+        exaggeration: 0.4,  // 0-1: expressivité naturelle (0.4 = tonalité pédagogique calme)
+        cfg_weight: 0.5,    // 0-1: fidélité à la prononciation (0.5 = équilibré)
+      }),
+      signal: AbortSignal.timeout(55000),
+    })
 
-    if (!ttsRes.ok) {
-      const err = await ttsRes.text()
-      console.error('ElevenLabs error:', err)
-      return NextResponse.json({ error: 'Génération audio échouée' }, { status: 500 })
+    if (!falRes.ok) {
+      const err = await falRes.text()
+      console.error('fal.ai Chatterbox error:', err)
+      return NextResponse.json({ error: 'Génération audio échouée', detail: err }, { status: 500 })
     }
 
-    const audioBuffer = await ttsRes.arrayBuffer()
+    const falData = await falRes.json() as {
+      audio?: { url: string; content_type?: string }
+      audio_url?: string | { url: string }
+    }
+
+    // Handle different possible response shapes
+    let audioUrl: string | null = null
+    if (falData.audio?.url) {
+      audioUrl = falData.audio.url
+    } else if (typeof falData.audio_url === 'string') {
+      audioUrl = falData.audio_url
+    } else if (typeof falData.audio_url === 'object' && falData.audio_url?.url) {
+      audioUrl = falData.audio_url.url
+    }
+
+    if (!audioUrl) {
+      console.error('Unexpected fal.ai response shape:', JSON.stringify(falData).slice(0, 300))
+      return NextResponse.json({ error: 'Format de réponse inattendu' }, { status: 500 })
+    }
+
+    // 3. Fetch the audio file and stream it back
+    const audioRes = await fetch(audioUrl)
+    if (!audioRes.ok) {
+      return NextResponse.json({ error: 'Impossible de récupérer le fichier audio' }, { status: 500 })
+    }
+
+    const audioBuffer = await audioRes.arrayBuffer()
+    const contentType = falData.audio?.content_type ?? 'audio/wav'
+
     return new NextResponse(new Uint8Array(audioBuffer), {
-      headers: { 'Content-Type': 'audio/mpeg' },
+      headers: { 'Content-Type': contentType },
     })
   } catch (error) {
     console.error('Audio generation error:', error)
