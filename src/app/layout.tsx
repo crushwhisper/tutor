@@ -5,7 +5,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'TUTOR — Préparation aux concours médicaux',
-  description: '563 cours structurés, des outils de révision avancés et des programmes sur mesure pour réussir votre concours médical.',
+  description: '808 cours structurés, des QCM ciblés et des programmes sur mesure (90j / 180j) pour réussir votre concours médical.',
 }
 
 export default function RootLayout({

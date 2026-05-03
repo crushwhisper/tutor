@@ -25,7 +25,7 @@ const METRICS = [
   { value: 4, suffix: '×', label: 'meilleure rétention', sublabel: 'avec la répétition espacée' },
   { value: 67, suffix: '%', label: 'de réussite en plus', sublabel: 'avec le testing effect' },
   { value: 2, suffix: '×', label: 'plus de compréhension', sublabel: 'avec le double encodage' },
-  { value: 563, suffix: '', label: 'cours structurés', sublabel: 'sur la plateforme' },
+  { value: 808, suffix: '', label: 'cours structurés', sublabel: 'sur la plateforme' },
 ]
 
 function MetricItem({ value, suffix, label, sublabel, delay, active }: {
