@@ -10,13 +10,13 @@ const config: Config = {
     extend: {
       colors: {
         indigo: {
-          DEFAULT: '#6366F1',
+          DEFAULT: '#2563EB',
         },
       },
       fontFamily: {
-        sans: ['Bricolage Grotesque', 'system-ui', 'sans-serif'],
-        serif: ['Instrument Serif', 'Georgia', 'serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['var(--font-geist-sans)', 'Outfit', 'system-ui', 'sans-serif'],
+        serif: ['Halant', 'Georgia', 'serif'],
+        mono: ['var(--font-geist-mono)', 'JetBrains Mono', 'monospace'],
       },
       animation: {
         float: 'float 6s ease-in-out infinite',

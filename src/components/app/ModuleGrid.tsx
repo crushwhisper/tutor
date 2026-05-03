@@ -32,8 +32,8 @@ const MODULE_META: Record<string, {
   },
   'urgences-medicales': {
     Icon: Siren,
-    color: '#9B59B6',
-    bg: 'rgba(155,89,182,0.08)',
+    color: '#0891B2',
+    bg: 'rgba(8,145,178,0.08)',
     description: 'Prise en charge des urgences médicales',
   },
   'urgences-chirurgicales': {

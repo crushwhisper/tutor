@@ -11,7 +11,7 @@ const MODULE_META: Record<string, { Icon: React.ElementType; color: string }> = 
   'anatomie-biologie': { Icon: Dna, color: '#4A90D9' },
   'medecine': { Icon: Heartbeat, color: '#E8A83E' },
   'chirurgie': { Icon: Scissors, color: '#E85555' },
-  'urgences-medicales': { Icon: Siren, color: '#9B59B6' },
+  'urgences-medicales': { Icon: Siren, color: '#0891B2' },
   'urgences-chirurgicales': { Icon: Lightning, color: '#E67E22' },
 }
 
