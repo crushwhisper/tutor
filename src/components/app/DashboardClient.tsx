@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
   Books, Lightning, CalendarDots,
-  Fire, ChartBar, ArrowRight, GraduationCap,
+  Fire, ChartBar, ArrowRight, Certificate,
 } from '@phosphor-icons/react'
 
 interface Props {
@@ -283,7 +283,7 @@ export default function DashboardClient({ profile, completedCount, isPro }: Prop
             borderRadius: '10px',
             display: 'flex', alignItems: 'center', gap: '8px',
           }}>
-            <GraduationCap size={16} weight="duotone" style={{ color: isPro ? 'var(--owl-gold)' : 'var(--app-text-ghost)' }} />
+            <Certificate size={16} weight="duotone" style={{ color: isPro ? 'var(--owl-gold)' : 'var(--app-text-ghost)' }} />
             <span style={{ fontSize: '12px', fontWeight: 600, color: isPro ? 'var(--owl-gold)' : 'var(--app-text-ghost)' }}>
               {isPro ? 'Plan Pro actif' : 'Plan Starter'}
             </span>
