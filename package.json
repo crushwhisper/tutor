@@ -23,6 +23,7 @@
     "markmap-lib": "^0.18.12",
     "markmap-view": "^0.18.12",
     "mermaid": "^10.9.5",
+    "motion": "^12.38.0",
     "multer": "^2.1.1",
     "next": "16.2.0",
     "openai": "^6.32.0",
@@ -38,7 +39,6 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
-    "@netlify/plugin-nextjs": "^5.15.9",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
