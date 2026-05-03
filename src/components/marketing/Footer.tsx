@@ -26,10 +26,10 @@ function OwlSmall() {
       <path d="M9 11 L7 4 L13 9Z" fill="rgba(255,255,255,0.7)" />
       <path d="M23 11 L25 4 L19 9Z" fill="rgba(255,255,255,0.7)" />
       <ellipse cx="16" cy="19" rx="10" ry="11" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" />
-      <circle cx="11.5" cy="17" r="3.5" fill="rgba(99,102,241,0.15)" stroke="#6366F1" strokeWidth="1.5" />
-      <circle cx="11.5" cy="17" r="1.8" fill="#6366F1" />
-      <circle cx="20.5" cy="17" r="3.5" fill="rgba(99,102,241,0.15)" stroke="#6366F1" strokeWidth="1.5" />
-      <circle cx="20.5" cy="17" r="1.8" fill="#6366F1" />
+      <circle cx="11.5" cy="17" r="3.5" fill="rgba(37,99,235,0.15)" stroke="#2563EB" strokeWidth="1.5" />
+      <circle cx="11.5" cy="17" r="1.8" fill="#2563EB" />
+      <circle cx="20.5" cy="17" r="3.5" fill="rgba(37,99,235,0.15)" stroke="#2563EB" strokeWidth="1.5" />
+      <circle cx="20.5" cy="17" r="1.8" fill="#2563EB" />
       <path d="M14.5 21 L16 23 L17.5 21Z" fill="rgba(255,255,255,0.7)" />
     </svg>
   )

@@ -110,7 +110,7 @@ export default function SubscriptionCard({ user }: Props) {
               disabled={!!loading}
               style={{
                 width: '100%', padding: '10px', borderRadius: '10px', border: 'none',
-                background: '#6366F1', color: 'white', fontSize: '13px', fontWeight: 600,
+                background: '#2563EB', color: 'white', fontSize: '13px', fontWeight: 600,
                 cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1,
                 transition: 'opacity 150ms',
               }}
@@ -143,7 +143,7 @@ export default function SubscriptionCard({ user }: Props) {
               disabled={!!loading}
               style={{
                 width: '100%', padding: '10px', borderRadius: '10px', border: 'none',
-                background: '#6366F1', color: 'white', fontSize: '13px', fontWeight: 600,
+                background: '#2563EB', color: 'white', fontSize: '13px', fontWeight: 600,
                 cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1,
                 transition: 'opacity 150ms',
               }}

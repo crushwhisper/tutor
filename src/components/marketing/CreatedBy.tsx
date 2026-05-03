@@ -16,8 +16,8 @@ export default function CreatedBy() {
             width: '64px',
             height: '64px',
             borderRadius: '16px',
-            background: 'rgba(99,102,241,0.08)',
-            border: '1px solid rgba(99,102,241,0.15)',
+            background: 'rgba(37,99,235,0.08)',
+            border: '1px solid rgba(37,99,235,0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -28,10 +28,10 @@ export default function CreatedBy() {
             <path d="M9 10 L7 4 L12 8Z" fill="#09090B" />
             <path d="M23 10 L25 4 L20 8Z" fill="#09090B" />
             <ellipse cx="16" cy="19" rx="10" ry="11" fill="none" stroke="#09090B" strokeWidth="1.5" />
-            <circle cx="11.5" cy="17" r="3.5" fill="rgba(99,102,241,0.15)" stroke="#6366F1" strokeWidth="1.5" />
-            <circle cx="11.5" cy="17" r="1.8" fill="#6366F1" />
-            <circle cx="20.5" cy="17" r="3.5" fill="rgba(99,102,241,0.15)" stroke="#6366F1" strokeWidth="1.5" />
-            <circle cx="20.5" cy="17" r="1.8" fill="#6366F1" />
+            <circle cx="11.5" cy="17" r="3.5" fill="rgba(37,99,235,0.15)" stroke="#2563EB" strokeWidth="1.5" />
+            <circle cx="11.5" cy="17" r="1.8" fill="#2563EB" />
+            <circle cx="20.5" cy="17" r="3.5" fill="rgba(37,99,235,0.15)" stroke="#2563EB" strokeWidth="1.5" />
+            <circle cx="20.5" cy="17" r="1.8" fill="#2563EB" />
             <path d="M14.5 21 L16 23 L17.5 21Z" fill="#09090B" />
           </svg>
         </div>

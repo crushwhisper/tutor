@@ -33,7 +33,7 @@ export default function HowItWorks() {
     width: '56px',
     height: '56px',
     borderRadius: '50%',
-    border: inView ? '1.5px solid #6366F1' : '1.5px solid #E4E4E7',
+    border: inView ? '1.5px solid #2563EB' : '1.5px solid #E4E4E7',
     background: 'white',
     display: 'flex',
     alignItems: 'center',
@@ -236,7 +236,7 @@ export default function HowItWorks() {
                   fontFamily: 'Outfit, system-ui, sans-serif',
                   fontSize: '40px',
                   fontWeight: 800,
-                  color: '#6366F1',
+                  color: '#2563EB',
                   lineHeight: 1,
                   marginBottom: '4px',
                 }}
@@ -260,7 +260,7 @@ export default function HowItWorks() {
                   fontFamily: 'Outfit, system-ui, sans-serif',
                   fontSize: '40px',
                   fontWeight: 800,
-                  color: '#6366F1',
+                  color: '#2563EB',
                   lineHeight: 1,
                   marginBottom: '4px',
                 }}

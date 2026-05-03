@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { ArrowRight, Books, Brain, Lightning } from '@phosphor-icons/react'
 
 function OwlMark() {
   return (
@@ -19,32 +20,177 @@ function OwlMark() {
   )
 }
 
-function NavLink({ href, children, isExternal }: { href: string; children: React.ReactNode; isExternal?: boolean }) {
-  const [hovered, setHovered] = useState(false)
-  const style: React.CSSProperties = {
-    fontFamily: 'Outfit, system-ui, sans-serif',
-    fontSize: '14px',
-    fontWeight: 400,
-    color: hovered ? '#2b180a' : '#94877c',
-    textDecoration: 'none',
-    transition: 'color 250ms',
-    cursor: 'pointer',
-  }
-  if (isExternal) {
-    return (
-      <a href={href} style={style}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}>
-        {children}
-      </a>
-    )
-  }
+/* Floating product mockup shown on the right side */
+function ProductMockup() {
   return (
-    <Link href={href} style={style}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}>
-      {children}
-    </Link>
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      maxWidth: '480px',
+      userSelect: 'none',
+    }}>
+      {/* Glow backdrop */}
+      <div style={{
+        position: 'absolute',
+        top: '50%', left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '360px', height: '360px',
+        background: 'radial-gradient(circle, rgba(0,153,255,0.12) 0%, transparent 70%)',
+        filter: 'blur(40px)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Main card — course viewer */}
+      <motion.div
+        initial={{ opacity: 0, y: 30, rotate: -1 }}
+        animate={{ opacity: 1, y: 0, rotate: -1 }}
+        transition={{ duration: 0.9, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          background: 'rgba(255,255,255,0.92)',
+          border: '1px solid rgba(43,24,10,0.08)',
+          borderRadius: '20px',
+          padding: '24px',
+          boxShadow: '0 24px 64px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.8) inset',
+          backdropFilter: 'blur(12px)',
+          position: 'relative',
+          zIndex: 2,
+        }}
+      >
+        {/* Course header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+          <div style={{
+            width: '32px', height: '32px', borderRadius: '8px',
+            background: 'rgba(0,153,255,0.1)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Books size={16} weight="duotone" style={{ color: '#0099ff' }} />
+          </div>
+          <div>
+            <div style={{ fontSize: '12px', fontWeight: 600, color: '#2b180a', fontFamily: 'Outfit, sans-serif' }}>
+              Anatomie — Module 2
+            </div>
+            <div style={{ fontSize: '10px', color: '#94877c', fontFamily: 'Outfit, sans-serif' }}>
+              Le péricarde et ses rapports
+            </div>
+          </div>
+          <div style={{
+            marginLeft: 'auto',
+            fontSize: '10px', fontWeight: 700,
+            color: '#10B981', background: 'rgba(16,185,129,0.1)',
+            padding: '3px 8px', borderRadius: '999px',
+            fontFamily: 'Outfit, sans-serif',
+          }}>
+            Complété
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div style={{ height: '4px', background: '#f0ebe5', borderRadius: '999px', marginBottom: '20px', overflow: 'hidden' }}>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: '72%' }}
+            transition={{ duration: 1.2, delay: 1.8, ease: [0.16, 1, 0.3, 1] }}
+            style={{ height: '100%', background: 'linear-gradient(90deg, #0099ff, #0099ff88)', borderRadius: '999px' }}
+          />
+        </div>
+
+        {/* Mini content lines */}
+        {[
+          { w: '90%', dark: true },
+          { w: '75%', dark: false },
+          { w: '85%', dark: false },
+          { w: '55%', dark: false },
+        ].map((l, i) => (
+          <div key={i} style={{
+            height: '8px',
+            width: l.w,
+            background: l.dark ? 'rgba(43,24,10,0.12)' : 'rgba(43,24,10,0.06)',
+            borderRadius: '4px',
+            marginBottom: '8px',
+          }} />
+        ))}
+
+        {/* QCM question preview */}
+        <div style={{
+          marginTop: '16px',
+          background: 'rgba(0,153,255,0.05)',
+          border: '1px solid rgba(0,153,255,0.12)',
+          borderRadius: '12px',
+          padding: '14px',
+        }}>
+          <div style={{ fontSize: '10px', fontWeight: 700, color: '#0099ff', fontFamily: 'Outfit, sans-serif', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            QCM · Question 3/10
+          </div>
+          <div style={{ height: '7px', background: 'rgba(43,24,10,0.08)', borderRadius: '4px', width: '88%', marginBottom: '10px' }} />
+          {['A', 'B', 'C'].map((opt, i) => (
+            <div key={opt} style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              padding: '6px 10px', borderRadius: '8px', marginBottom: '4px',
+              background: i === 1 ? 'rgba(16,185,129,0.08)' : 'transparent',
+              border: `1px solid ${i === 1 ? 'rgba(16,185,129,0.25)' : 'rgba(43,24,10,0.06)'}`,
+            }}>
+              <div style={{
+                width: '16px', height: '16px', borderRadius: '50%', flexShrink: 0,
+                background: i === 1 ? '#10B981' : 'rgba(43,24,10,0.06)',
+                border: i === 1 ? 'none' : '1px solid rgba(43,24,10,0.1)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                {i === 1 && <svg width="8" height="8" viewBox="0 0 8 8"><path d="M1.5 4l2 2 3-3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+              </div>
+              <div style={{ height: '6px', background: i === 1 ? 'rgba(16,185,129,0.3)' : 'rgba(43,24,10,0.07)', borderRadius: '3px', width: `${[60, 70, 45][i]}%` }} />
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Floating stat badge — top right */}
+      <motion.div
+        initial={{ opacity: 0, x: 20, y: -10 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ duration: 0.7, delay: 1.8, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          position: 'absolute',
+          top: '-20px', right: '-16px',
+          background: 'rgba(255,255,255,0.95)',
+          border: '1px solid rgba(43,24,10,0.08)',
+          borderRadius: '14px',
+          padding: '10px 14px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.07)',
+          zIndex: 3,
+          display: 'flex', alignItems: 'center', gap: '8px',
+        }}
+      >
+        <Lightning size={14} weight="duotone" style={{ color: '#F59E0B' }} />
+        <div>
+          <div style={{ fontSize: '13px', fontWeight: 700, color: '#2b180a', fontFamily: 'Outfit, sans-serif', lineHeight: 1 }}>808 cours</div>
+          <div style={{ fontSize: '10px', color: '#94877c', fontFamily: 'Outfit, sans-serif' }}>en bibliothèque</div>
+        </div>
+      </motion.div>
+
+      {/* Floating brain badge — bottom left */}
+      <motion.div
+        initial={{ opacity: 0, x: -20, y: 20 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ duration: 0.7, delay: 2.0, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          position: 'absolute',
+          bottom: '-16px', left: '-20px',
+          background: 'rgba(255,255,255,0.95)',
+          border: '1px solid rgba(43,24,10,0.08)',
+          borderRadius: '14px',
+          padding: '10px 14px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.07)',
+          zIndex: 3,
+          display: 'flex', alignItems: 'center', gap: '8px',
+        }}
+      >
+        <Brain size={14} weight="duotone" style={{ color: '#0099ff' }} />
+        <div>
+          <div style={{ fontSize: '13px', fontWeight: 700, color: '#2b180a', fontFamily: 'Outfit, sans-serif', lineHeight: 1 }}>Spaced repetition</div>
+          <div style={{ fontSize: '10px', color: '#94877c', fontFamily: 'Outfit, sans-serif' }}>mémorisation prouvée</div>
+        </div>
+      </motion.div>
+    </div>
   )
 }
 
@@ -52,44 +198,77 @@ export default function ScienceHero() {
   const [ctaHovered, setCtaHovered] = useState(false)
 
   return (
-    <section style={{ minHeight: '100dvh', position: 'relative', display: 'flex', flexDirection: 'column', background: 'transparent' }}>
-
-      {/* Bottom fade into next section */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%', background: 'linear-gradient(to top, rgba(246,240,233,0.75) 40%, transparent)', pointerEvents: 'none', zIndex: 1 }} />
+    <section style={{
+      minHeight: '100dvh',
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column',
+      background: 'transparent',
+      overflow: 'hidden',
+    }}>
+      {/* Bottom fade */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%',
+        background: 'linear-gradient(to top, rgba(246,240,233,0.75) 40%, transparent)',
+        pointerEvents: 'none', zIndex: 1,
+      }} />
 
       {/* Navigation */}
-      <nav style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, padding: '32px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <nav style={{
+        position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10,
+        padding: '28px 48px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
           <OwlMark />
           <span style={{
             fontFamily: 'Outfit, system-ui, sans-serif',
             fontWeight: 700, fontSize: '16px',
-            color: '#2b180a',
-            letterSpacing: '-0.02em',
+            color: '#2b180a', letterSpacing: '-0.02em',
           }}>TUTOR</span>
         </Link>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '36px' }}>
-          <NavLink href="#principes" isExternal>La Science</NavLink>
-          <NavLink href="/platform">La Plateforme</NavLink>
-          <Link href="/auth/signup" style={{
+        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+          <Link href="/platform" style={{
+            fontFamily: 'Outfit, system-ui, sans-serif',
+            fontSize: '14px', fontWeight: 400,
+            color: '#94877c', textDecoration: 'none',
+            transition: 'color 200ms',
+          }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#2b180a' }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#94877c' }}
+          >
+            La Plateforme
+          </Link>
+          <Link href="/pricing" style={{
+            fontFamily: 'Outfit, system-ui, sans-serif',
+            fontSize: '14px', fontWeight: 400,
+            color: '#94877c', textDecoration: 'none',
+            transition: 'color 200ms',
+          }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#2b180a' }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#94877c' }}
+          >
+            Tarifs
+          </Link>
+          <Link href="/auth/login" style={{
             fontFamily: 'Outfit, system-ui, sans-serif',
             fontSize: '13px', fontWeight: 500,
-            color: '#2b180a',
-            textDecoration: 'none',
-            border: '1px solid #e8d3c0',
-            borderRadius: '999px',
+            color: '#2b180a', textDecoration: 'none',
+            border: '1px solid #e8d3c0', borderRadius: '999px',
             padding: '8px 20px',
             background: 'rgba(255,255,255,0.6)',
             transition: 'all 250ms',
           }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = '#0099ff'
-              ;(e.currentTarget as HTMLElement).style.color = '#0099ff'
+              const el = e.currentTarget as HTMLElement
+              el.style.borderColor = '#0099ff'
+              el.style.color = '#0099ff'
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = '#e8d3c0'
-              ;(e.currentTarget as HTMLElement).style.color = '#2b180a'
+              const el = e.currentTarget as HTMLElement
+              el.style.borderColor = '#e8d3c0'
+              el.style.color = '#2b180a'
             }}
           >
             Connexion
@@ -97,109 +276,183 @@ export default function ScienceHero() {
         </div>
       </nav>
 
-      {/* Hero content */}
+      {/* Hero — Asymmetric split */}
       <div style={{
-        flex: 1, display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        textAlign: 'center', padding: '160px 24px 120px',
-        position: 'relative', zIndex: 1,
+        flex: 1,
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        alignItems: 'center',
+        gap: '64px',
+        maxWidth: '1280px',
+        margin: '0 auto',
+        padding: '0 48px',
+        paddingTop: '120px',
+        paddingBottom: '80px',
+        position: 'relative',
+        zIndex: 1,
+        width: '100%',
       }}>
-
-        {/* Eyebrow */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-          style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '48px' }}
-        >
-          <div style={{ width: '40px', height: '1px', background: '#e8d3c0' }} />
-          <span style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '11px', fontWeight: 500,
-            textTransform: 'uppercase', letterSpacing: '4px',
-            color: '#94877c',
-          }}>Fondé sur la recherche</span>
-          <div style={{ width: '40px', height: '1px', background: '#e8d3c0' }} />
-        </motion.div>
-
-        {/* Line 1 */}
-        <div style={{ overflow: 'hidden' }}>
-          <motion.h1
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        {/* Left — Typography stack */}
+        <div>
+          {/* Eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.4 }}
             style={{
-              fontFamily: "'Halant', Georgia, serif",
-              fontSize: 'clamp(52px, 8vw, 96px)',
-              fontWeight: 600, color: '#2b180a',
-              lineHeight: 1.05, letterSpacing: '-2px',
-              marginBottom: '4px',
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              marginBottom: '40px',
+              background: 'rgba(255,255,255,0.6)',
+              border: '1px solid rgba(43,24,10,0.1)',
+              borderRadius: '999px', padding: '6px 14px 6px 8px',
             }}
           >
-            La science de
-          </motion.h1>
-        </div>
+            <span style={{
+              width: '6px', height: '6px', borderRadius: '50%',
+              background: '#0099ff', display: 'inline-block',
+            }} />
+            <span style={{
+              fontFamily: 'Outfit, system-ui, sans-serif',
+              fontSize: '12px', fontWeight: 500,
+              color: '#94877c', letterSpacing: '0.02em',
+            }}>
+              Fondé sur la recherche en sciences cognitives
+            </span>
+          </motion.div>
 
-        {/* Line 2 — italic, muted brown */}
-        <div style={{ overflow: 'hidden', marginBottom: '40px' }}>
-          <motion.h1
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              fontFamily: "'Halant', Georgia, serif",
-              fontSize: 'clamp(52px, 8vw, 96px)',
-              fontWeight: 400, fontStyle: 'italic',
-              color: '#94877c',
-              lineHeight: 1.05, letterSpacing: '-2px',
-            }}
-          >
-            la réussite médicale.
-          </motion.h1>
-        </div>
+          {/* Headline */}
+          <div style={{ overflow: 'hidden', marginBottom: '8px' }}>
+            <motion.h1
+              initial={{ y: 80, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.9, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                fontFamily: "'Halant', Georgia, serif",
+                fontSize: 'clamp(44px, 5.5vw, 80px)',
+                fontWeight: 600, color: '#2b180a',
+                lineHeight: 1.0, letterSpacing: '-1.5px',
+              }}
+            >
+              La science de
+            </motion.h1>
+          </div>
 
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 1.3, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            fontFamily: 'Outfit, system-ui, sans-serif',
-            fontSize: '18px', fontWeight: 300,
-            color: '#94877c',
-            maxWidth: '520px', lineHeight: 1.75,
-            marginBottom: '56px',
-          }}
-        >
-          Des techniques de mémorisation et de compréhension
-          validées par la recherche, à portée de main.
-        </motion.p>
+          <div style={{ overflow: 'hidden', marginBottom: '36px' }}>
+            <motion.h1
+              initial={{ y: 80, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.9, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                fontFamily: "'Halant', Georgia, serif",
+                fontSize: 'clamp(44px, 5.5vw, 80px)',
+                fontWeight: 400, fontStyle: 'italic',
+                color: '#94877c',
+                lineHeight: 1.0, letterSpacing: '-1.5px',
+              }}
+            >
+              la réussite médicale.
+            </motion.h1>
+          </div>
 
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.6 }}
-        >
-          <a
-            href="#principes"
-            onMouseEnter={() => setCtaHovered(true)}
-            onMouseLeave={() => setCtaHovered(false)}
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
             style={{
               fontFamily: 'Outfit, system-ui, sans-serif',
-              fontSize: '15px', fontWeight: 500,
-              color: ctaHovered ? 'white' : '#2b180a',
-              textDecoration: 'none',
-              border: '1px solid #2b180a',
-              borderRadius: '999px',
-              padding: '14px 36px',
-              background: ctaHovered ? '#2b180a' : 'transparent',
-              transition: 'all 400ms cubic-bezier(0.16,1,0.3,1)',
-              display: 'inline-block',
+              fontSize: '17px', fontWeight: 300,
+              color: '#94877c', lineHeight: 1.75,
+              maxWidth: '440px', marginBottom: '48px',
             }}
           >
-            Découvrir →
-          </a>
+            808 cours structurés, des QCM ciblés et des programmes sur mesure
+            pour réussir votre concours médical.
+          </motion.p>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 1.2 }}
+            style={{ display: 'flex', alignItems: 'center', gap: '16px' }}
+          >
+            <Link
+              href="/auth/signup"
+              onMouseEnter={() => setCtaHovered(true)}
+              onMouseLeave={() => setCtaHovered(false)}
+              style={{
+                fontFamily: 'Outfit, system-ui, sans-serif',
+                fontSize: '15px', fontWeight: 600,
+                color: ctaHovered ? 'white' : '#2b180a',
+                textDecoration: 'none',
+                border: '1px solid #2b180a',
+                borderRadius: '999px',
+                padding: '13px 32px',
+                background: ctaHovered ? '#2b180a' : 'transparent',
+                transition: 'all 350ms cubic-bezier(0.16,1,0.3,1)',
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+              }}
+            >
+              Commencer gratuitement
+              <ArrowRight size={16} weight="bold" />
+            </Link>
+
+            <Link
+              href="#principes"
+              style={{
+                fontFamily: 'Outfit, system-ui, sans-serif',
+                fontSize: '14px', fontWeight: 400,
+                color: '#94877c', textDecoration: 'none',
+                transition: 'color 200ms',
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#2b180a' }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#94877c' }}
+            >
+              En savoir plus →
+            </Link>
+          </motion.div>
+
+          {/* Social proof row */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.6, duration: 0.8 }}
+            style={{ display: 'flex', alignItems: 'center', gap: '20px', marginTop: '40px' }}
+          >
+            <div style={{ display: 'flex' }}>
+              {['#dab697', '#c9a57a', '#e8c4a0'].map((c, i) => (
+                <div key={i} style={{
+                  width: '28px', height: '28px', borderRadius: '50%',
+                  background: c, border: '2px solid white',
+                  marginLeft: i > 0 ? '-8px' : 0,
+                }} />
+              ))}
+            </div>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#2b180a', fontFamily: 'Outfit, sans-serif' }}>
+                +500 étudiants
+              </div>
+              <div style={{ fontSize: '11px', color: '#94877c', fontFamily: 'Outfit, sans-serif' }}>
+                en préparation active
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Right — Product mockup */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.0, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingTop: '40px',
+          }}
+        >
+          <ProductMockup />
         </motion.div>
       </div>
 
@@ -209,7 +462,7 @@ export default function ScienceHero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 2.2, duration: 1 }}
         style={{
-          position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)',
+          position: 'absolute', bottom: '32px', left: '50%', transform: 'translateX(-50%)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
           zIndex: 1,
         }}
@@ -219,10 +472,7 @@ export default function ScienceHero() {
           fontSize: '10px', letterSpacing: '3px',
           color: '#e8d3c0', textTransform: 'uppercase',
         }}>Scroll</span>
-        <svg
-          width="16" height="16" viewBox="0 0 16 16" fill="none"
-          className="animate-bounce-scroll"
-        >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="animate-bounce-scroll">
           <path d="M2 5l6 6 6-6" stroke="#dab697" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </motion.div>

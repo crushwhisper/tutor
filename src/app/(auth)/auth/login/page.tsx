@@ -88,7 +88,7 @@ export default function LoginPage() {
           Pas encore de compte ?{' '}
           <Link
             href="/auth/signup"
-            style={{ color: '#6366F1', textDecoration: 'none', fontWeight: 500 }}
+            style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 500 }}
           >
             Créer un compte
           </Link>
@@ -186,8 +186,8 @@ export default function LoginPage() {
               required
               style={{
                 ...inputStyle,
-                borderColor: emailFocused ? '#6366F1' : '#E4E4E7',
-                boxShadow: emailFocused ? '0 0 0 3px rgba(99,102,241,0.08)' : 'none',
+                borderColor: emailFocused ? '#2563EB' : '#E4E4E7',
+                boxShadow: emailFocused ? '0 0 0 3px rgba(37,99,235,0.08)' : 'none',
               }}
             />
           </div>
@@ -199,7 +199,7 @@ export default function LoginPage() {
                 style={{
                   fontFamily: 'Outfit, system-ui, sans-serif',
                   fontSize: '12px',
-                  color: '#6366F1',
+                  color: '#2563EB',
                   textDecoration: 'none',
                 }}
               >
@@ -216,8 +216,8 @@ export default function LoginPage() {
               required
               style={{
                 ...inputStyle,
-                borderColor: pwFocused ? '#6366F1' : '#E4E4E7',
-                boxShadow: pwFocused ? '0 0 0 3px rgba(99,102,241,0.08)' : 'none',
+                borderColor: pwFocused ? '#2563EB' : '#E4E4E7',
+                boxShadow: pwFocused ? '0 0 0 3px rgba(37,99,235,0.08)' : 'none',
               }}
             />
           </div>

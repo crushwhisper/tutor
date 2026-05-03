@@ -188,7 +188,7 @@ export default function Hero() {
           className="absolute inset-0"
           style={{
             background:
-              'radial-gradient(ellipse 80% 50% at 20% 50%, rgba(99,102,241,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 30%, rgba(245,158,11,0.04) 0%, transparent 50%), #FFFFFF',
+              'radial-gradient(ellipse 80% 50% at 20% 50%, rgba(37,99,235,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 30%, rgba(245,158,11,0.04) 0%, transparent 50%), #FFFFFF',
           }}
         />
         <video
@@ -227,7 +227,7 @@ export default function Hero() {
                 style={{
                   width: '32px',
                   height: '2px',
-                  background: '#6366F1',
+                  background: '#2563EB',
                   flexShrink: 0,
                 }}
               />
@@ -274,7 +274,7 @@ export default function Hero() {
               >
                 <span
                   style={{
-                    background: 'linear-gradient(135deg, #6366F1, #818CF8)',
+                    background: 'linear-gradient(135deg, #2563EB, #60A5FA)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                     backgroundClip: 'text',
@@ -289,7 +289,7 @@ export default function Hero() {
                     bottom: '-4px',
                     left: 0,
                     height: '3px',
-                    background: '#6366F1',
+                    background: '#2563EB',
                     borderRadius: '2px',
                     width: underlineReady ? '100%' : '0%',
                     transition: 'width 800ms cubic-bezier(0.16, 1, 0.3, 1)',
@@ -355,7 +355,7 @@ export default function Hero() {
                   transition: 'border-color 200ms',
                 }}
               >
-                <PlayCircle size={18} weight="fill" style={{ color: '#6366F1' }} />
+                <PlayCircle size={18} weight="fill" style={{ color: '#2563EB' }} />
                 Voir la démo
               </a>
             </motion.div>
@@ -400,14 +400,14 @@ export default function Hero() {
                 position: 'absolute',
                 top: '-16px',
                 right: '-16px',
-                background: 'rgba(99,102,241,0.1)',
-                border: '1px solid rgba(99,102,241,0.2)',
+                background: 'rgba(37,99,235,0.1)',
+                border: '1px solid rgba(37,99,235,0.2)',
                 borderRadius: '12px',
                 padding: '10px 16px',
                 fontFamily: 'Outfit, system-ui, sans-serif',
                 fontSize: '13px',
                 fontWeight: 600,
-                color: '#6366F1',
+                color: '#2563EB',
                 animation: 'float-badge 6s ease-in-out infinite',
                 animationDelay: '2s',
                 whiteSpace: 'nowrap',
@@ -444,7 +444,7 @@ export default function Hero() {
                     style={{
                       width: '3px',
                       height: `${h}%`,
-                      background: '#6366F1',
+                      background: '#2563EB',
                       borderRadius: '2px',
                       animationDelay: `${i * 100}ms`,
                     }}

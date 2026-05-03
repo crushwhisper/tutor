@@ -24,7 +24,7 @@ export default function VideoDemo() {
             fontWeight: 500,
             textTransform: 'uppercase',
             letterSpacing: '0.15em',
-            color: 'rgba(99,102,241,0.7)',
+            color: 'rgba(37,99,235,0.7)',
             marginBottom: '20px',
           }}
         >
@@ -74,14 +74,14 @@ export default function VideoDemo() {
               height: '80px',
               borderRadius: '50%',
               border: playHovered ? '2px solid transparent' : '2px solid rgba(255,255,255,0.3)',
-              background: playHovered ? '#6366F1' : 'rgba(255,255,255,0.05)',
+              background: playHovered ? '#2563EB' : 'rgba(255,255,255,0.05)',
               backdropFilter: 'blur(8px)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               transition: 'all 300ms ease',
-              boxShadow: playHovered ? '0 0 20px rgba(99,102,241,0.5), 0 0 60px rgba(99,102,241,0.15)' : 'none',
+              boxShadow: playHovered ? '0 0 20px rgba(37,99,235,0.5), 0 0 60px rgba(37,99,235,0.15)' : 'none',
               marginBottom: '16px',
             }}
           >

@@ -757,8 +757,8 @@ function QCMTab({
                 <PolarAngleAxis dataKey="module" tick={{ fill: '#888888', fontSize: 11 }} />
                 <Radar
                   dataKey="score"
-                  stroke="#6366F1"
-                  fill="#6366F1"
+                  stroke="#2563EB"
+                  fill="#2563EB"
                   fillOpacity={0.15}
                   strokeWidth={2}
                 />

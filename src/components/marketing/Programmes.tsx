@@ -64,9 +64,9 @@ function CalendarVisual() {
                     }
                   : isCurrent
                   ? {
-                      background: '#6366F1',
+                      background: '#2563EB',
                       color: 'white',
-                      boxShadow: '0 0 12px rgba(99,102,241,0.4)',
+                      boxShadow: '0 0 12px rgba(37,99,235,0.4)',
                     }
                   : {
                       background: '#F4F4F5',
@@ -269,9 +269,9 @@ export default function Programmes() {
                     fontFamily: 'Outfit, system-ui, sans-serif',
                     fontSize: '12px',
                     fontWeight: 500,
-                    color: '#6366F1',
-                    background: 'rgba(99,102,241,0.08)',
-                    border: '1px solid rgba(99,102,241,0.2)',
+                    color: '#2563EB',
+                    background: 'rgba(37,99,235,0.08)',
+                    border: '1px solid rgba(37,99,235,0.2)',
                     borderRadius: '999px',
                     padding: '4px 12px',
                   }}
@@ -355,9 +355,9 @@ export default function Programmes() {
                     fontFamily: 'Outfit, system-ui, sans-serif',
                     fontSize: '12px',
                     fontWeight: 500,
-                    color: '#6366F1',
-                    background: 'rgba(99,102,241,0.08)',
-                    border: '1px solid rgba(99,102,241,0.2)',
+                    color: '#2563EB',
+                    background: 'rgba(37,99,235,0.08)',
+                    border: '1px solid rgba(37,99,235,0.2)',
                     borderRadius: '999px',
                     padding: '4px 12px',
                   }}

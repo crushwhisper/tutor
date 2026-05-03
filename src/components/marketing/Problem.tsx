@@ -108,7 +108,7 @@ export default function Problem() {
                   gap: '32px',
                   alignItems: 'flex-start',
                 }}
-                whileHover={{ borderColor: '#6366F1' }}
+                whileHover={{ borderColor: '#2563EB' }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               >
                 <motion.div

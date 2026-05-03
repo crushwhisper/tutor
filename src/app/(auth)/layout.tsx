@@ -8,14 +8,14 @@ export const metadata: Metadata = {
 function OwlMark() {
   return (
     <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
-      <path d="M9 11 L7 4 L13 9Z" fill="rgba(99,102,241,0.5)" />
-      <path d="M23 11 L25 4 L19 9Z" fill="rgba(99,102,241,0.5)" />
-      <ellipse cx="16" cy="19" rx="10" ry="11" fill="none" stroke="rgba(99,102,241,0.6)" strokeWidth="1.5" />
-      <circle cx="11.5" cy="17" r="3.5" fill="rgba(99,102,241,0.08)" stroke="#6366F1" strokeWidth="1.5" />
-      <circle cx="11.5" cy="17" r="1.8" fill="#6366F1" />
-      <circle cx="20.5" cy="17" r="3.5" fill="rgba(99,102,241,0.08)" stroke="#6366F1" strokeWidth="1.5" />
-      <circle cx="20.5" cy="17" r="1.8" fill="#6366F1" />
-      <path d="M14.5 21 L16 23 L17.5 21Z" fill="rgba(99,102,241,0.5)" />
+      <path d="M9 11 L7 4 L13 9Z" fill="rgba(37,99,235,0.5)" />
+      <path d="M23 11 L25 4 L19 9Z" fill="rgba(37,99,235,0.5)" />
+      <ellipse cx="16" cy="19" rx="10" ry="11" fill="none" stroke="rgba(37,99,235,0.6)" strokeWidth="1.5" />
+      <circle cx="11.5" cy="17" r="3.5" fill="rgba(37,99,235,0.08)" stroke="#2563EB" strokeWidth="1.5" />
+      <circle cx="11.5" cy="17" r="1.8" fill="#2563EB" />
+      <circle cx="20.5" cy="17" r="3.5" fill="rgba(37,99,235,0.08)" stroke="#2563EB" strokeWidth="1.5" />
+      <circle cx="20.5" cy="17" r="1.8" fill="#2563EB" />
+      <path d="M14.5 21 L16 23 L17.5 21Z" fill="rgba(37,99,235,0.5)" />
     </svg>
   )
 }
@@ -57,8 +57,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             position: 'absolute',
             inset: 0,
             backgroundImage:
-              'radial-gradient(ellipse 60% 50% at 80% 90%, rgba(99,102,241,0.06) 0%, transparent 70%),' +
-              'radial-gradient(ellipse 40% 40% at 20% 10%, rgba(99,102,241,0.04) 0%, transparent 70%)',
+              'radial-gradient(ellipse 60% 50% at 80% 90%, rgba(37,99,235,0.06) 0%, transparent 70%),' +
+              'radial-gradient(ellipse 40% 40% at 20% 10%, rgba(37,99,235,0.04) 0%, transparent 70%)',
             pointerEvents: 'none',
           }}
         />
@@ -98,7 +98,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               fontWeight: 500,
               textTransform: 'uppercase',
               letterSpacing: '0.15em',
-              color: '#6366F1',
+              color: '#2563EB',
               marginBottom: '20px',
             }}
           >
@@ -138,7 +138,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                     fontFamily: 'Outfit, system-ui, sans-serif',
                     fontSize: '32px',
                     fontWeight: 800,
-                    color: '#6366F1',
+                    color: '#2563EB',
                     lineHeight: 1,
                     minWidth: '72px',
                   }}

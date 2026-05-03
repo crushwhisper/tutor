@@ -27,7 +27,7 @@ function OwlLogo({ size = 32 }: { size?: number }) {
   }, [])
 
   const eyeFilter = hovered
-    ? 'drop-shadow(0 0 4px rgba(99,102,241,0.8))'
+    ? 'drop-shadow(0 0 4px rgba(37,99,235,0.8))'
     : 'none'
 
   return (
@@ -49,25 +49,25 @@ function OwlLogo({ size = 32 }: { size?: number }) {
       {/* Head */}
       <ellipse cx="16" cy="19" rx="10" ry="11" fill="none" stroke="#09090B" strokeWidth="1.5" />
       {/* Left eye outer */}
-      <circle cx="11.5" cy="17" r="3.5" fill="rgba(99,102,241,0.15)" stroke="#6366F1" strokeWidth="1.5" style={{ filter: eyeFilter }} />
+      <circle cx="11.5" cy="17" r="3.5" fill="rgba(37,99,235,0.15)" stroke="#2563EB" strokeWidth="1.5" style={{ filter: eyeFilter }} />
       {/* Left pupil */}
       <motion.circle
         cx="11.5"
         cy="17"
         r="1.8"
-        fill="#6366F1"
+        fill="#2563EB"
         animate={{ scaleY: blinking ? 0.1 : 1 }}
         transition={{ duration: 0.08 }}
         style={{ transformOrigin: '11.5px 17px', filter: eyeFilter }}
       />
       {/* Right eye outer */}
-      <circle cx="20.5" cy="17" r="3.5" fill="rgba(99,102,241,0.15)" stroke="#6366F1" strokeWidth="1.5" style={{ filter: eyeFilter }} />
+      <circle cx="20.5" cy="17" r="3.5" fill="rgba(37,99,235,0.15)" stroke="#2563EB" strokeWidth="1.5" style={{ filter: eyeFilter }} />
       {/* Right pupil */}
       <motion.circle
         cx="20.5"
         cy="17"
         r="1.8"
-        fill="#6366F1"
+        fill="#2563EB"
         animate={{ scaleY: blinking ? 0.1 : 1 }}
         transition={{ duration: 0.08 }}
         style={{ transformOrigin: '20.5px 17px', filter: eyeFilter }}

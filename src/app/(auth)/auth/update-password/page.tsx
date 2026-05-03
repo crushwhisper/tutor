@@ -72,7 +72,7 @@ export default function UpdatePasswordPage() {
             placeholder="8 caractères minimum"
             minLength={8}
             required
-            style={{ ...inputStyle, borderColor: pw1Focused ? '#6366F1' : '#E4E4E7', boxShadow: pw1Focused ? '0 0 0 3px rgba(99,102,241,0.08)' : 'none' }}
+            style={{ ...inputStyle, borderColor: pw1Focused ? '#2563EB' : '#E4E4E7', boxShadow: pw1Focused ? '0 0 0 3px rgba(37,99,235,0.08)' : 'none' }}
           />
         </div>
         <div>
@@ -88,7 +88,7 @@ export default function UpdatePasswordPage() {
             placeholder="Répétez le mot de passe"
             minLength={8}
             required
-            style={{ ...inputStyle, borderColor: pw2Focused ? '#6366F1' : '#E4E4E7', boxShadow: pw2Focused ? '0 0 0 3px rgba(99,102,241,0.08)' : 'none' }}
+            style={{ ...inputStyle, borderColor: pw2Focused ? '#2563EB' : '#E4E4E7', boxShadow: pw2Focused ? '0 0 0 3px rgba(37,99,235,0.08)' : 'none' }}
           />
         </div>
         <button

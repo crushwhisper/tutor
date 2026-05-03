@@ -6,8 +6,8 @@ import { Brain, Headphones, ClipboardText, Trophy, Cards, ChartLineUp } from '@p
 function MindmapSVG() {
   return (
     <svg viewBox="0 0 280 160" className="w-full mt-4" style={{ opacity: 0.6 }}>
-      <circle cx="140" cy="80" r="18" fill="none" stroke="#6366F1" strokeWidth="1.5" />
-      <text x="140" y="85" textAnchor="middle" fontSize="9" fill="#6366F1">Cours</text>
+      <circle cx="140" cy="80" r="18" fill="none" stroke="#2563EB" strokeWidth="1.5" />
+      <text x="140" y="85" textAnchor="middle" fontSize="9" fill="#2563EB">Cours</text>
       <line x1="140" y1="62" x2="100" y2="30" stroke="#E4E4E7" strokeWidth="1" />
       <circle cx="100" cy="30" r="12" fill="none" stroke="#D4D4D8" strokeWidth="1" />
       <line x1="140" y1="62" x2="180" y2="28" stroke="#E4E4E7" strokeWidth="1" />
@@ -31,7 +31,7 @@ function WaveformBars() {
           className="w-1.5 rounded-full animate-waveform"
           style={{
             height: `${h}%`,
-            background: '#6366F1',
+            background: '#2563EB',
             opacity: 0.5,
             animationDelay: `${i * 80}ms`,
           }}
@@ -64,7 +64,7 @@ function FeatureCard({ Icon, tag, title, description, children, style }: CardPro
         padding: '28px 32px',
         overflow: 'hidden',
         boxShadow: hovered
-          ? '0 0 0 1px rgba(99,102,241,0.3), 0 0 20px rgba(99,102,241,0.06), 0 8px 32px rgba(0,0,0,0.06)'
+          ? '0 0 0 1px rgba(37,99,235,0.3), 0 0 20px rgba(37,99,235,0.06), 0 8px 32px rgba(0,0,0,0.06)'
           : '0 1px 2px rgba(0,0,0,0.03)',
         transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
         transition: 'all 500ms cubic-bezier(0.16,1,0.3,1)',
@@ -148,7 +148,7 @@ export default function Features() {
             Un cours en entrée.{' '}
             <span
               style={{
-                background: 'linear-gradient(135deg, #6366F1, #818CF8)',
+                background: 'linear-gradient(135deg, #2563EB, #60A5FA)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',

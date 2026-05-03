@@ -231,14 +231,14 @@ export default function Pricing() {
           {/* PRO */}
           <div
             style={{
-              border: '1px solid rgba(99,102,241,0.3)',
+              border: '1px solid rgba(37,99,235,0.3)',
               borderRadius: '24px',
               padding: '40px',
               background: 'white',
               display: 'flex',
               flexDirection: 'column',
               position: 'relative',
-              boxShadow: '0 0 0 1px rgba(99,102,241,0.1), 0 0 40px rgba(99,102,241,0.06)',
+              boxShadow: '0 0 0 1px rgba(37,99,235,0.1), 0 0 40px rgba(37,99,235,0.06)',
             }}
           >
             {/* Recommended badge */}
@@ -248,7 +248,7 @@ export default function Pricing() {
                 top: '-12px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                background: '#6366F1',
+                background: '#2563EB',
                 color: 'white',
                 fontFamily: 'Outfit, system-ui, sans-serif',
                 fontSize: '11px',
@@ -278,7 +278,7 @@ export default function Pricing() {
                   fontFamily: 'Outfit, system-ui, sans-serif',
                   fontSize: '48px',
                   fontWeight: 800,
-                  background: 'linear-gradient(135deg, #6366F1, #818CF8)',
+                  background: 'linear-gradient(135deg, #2563EB, #60A5FA)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
@@ -310,7 +310,7 @@ export default function Pricing() {
                       color: '#3F3F46',
                     }}
                   >
-                    <Check size={16} weight="bold" style={{ color: '#6366F1', flexShrink: 0 }} />
+                    <Check size={16} weight="bold" style={{ color: '#2563EB', flexShrink: 0 }} />
                     {f}
                   </li>
                 ))}

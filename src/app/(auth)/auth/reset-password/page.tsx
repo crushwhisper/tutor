@@ -51,15 +51,15 @@ export default function ResetPasswordPage() {
             width: '64px',
             height: '64px',
             borderRadius: '50%',
-            background: 'rgba(99,102,241,0.08)',
-            border: '1px solid rgba(99,102,241,0.2)',
+            background: 'rgba(37,99,235,0.08)',
+            border: '1px solid rgba(37,99,235,0.2)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 24px',
           }}
         >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="4" width="20" height="16" rx="2" />
             <path d="M2 7l10 7 10-7" />
           </svg>
@@ -92,7 +92,7 @@ export default function ResetPasswordPage() {
           style={{
             fontFamily: 'Outfit, system-ui, sans-serif',
             fontSize: '14px',
-            color: '#6366F1',
+            color: '#2563EB',
             textDecoration: 'none',
             fontWeight: 500,
           }}
@@ -170,8 +170,8 @@ export default function ResetPasswordPage() {
             required
             style={{
               ...inputStyle,
-              borderColor: focused ? '#6366F1' : '#E4E4E7',
-              boxShadow: focused ? '0 0 0 3px rgba(99,102,241,0.08)' : 'none',
+              borderColor: focused ? '#2563EB' : '#E4E4E7',
+              boxShadow: focused ? '0 0 0 3px rgba(37,99,235,0.08)' : 'none',
             }}
           />
         </div>
@@ -206,7 +206,7 @@ export default function ResetPasswordPage() {
             color: '#71717A',
             textDecoration: 'none',
           }}
-          onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = '#6366F1')}
+          onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = '#2563EB')}
           onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = '#71717A')}
         >
           ← Retour à la connexion
